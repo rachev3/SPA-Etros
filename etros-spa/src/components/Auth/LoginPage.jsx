@@ -1,13 +1,17 @@
 import React, { useState } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
+import { useAuth } from "../../hooks/useAuth";
 
 const LoginPage = () => {
+  const { login, loading, error } = useAuth();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
     rememberMe: false,
   });
   const [showPassword, setShowPassword] = useState(false);
+  const [loginError, setLoginError] = useState(null);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -21,11 +25,27 @@ const LoginPage = () => {
     setShowPassword(!showPassword);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Here you would handle the login logic
-    console.log("Login data submitted:", formData);
-    // For now, just log the data that would be sent to the server
+    setLoginError(null);
+
+    try {
+      // Call the login function from useAuth hook
+      const userData = await login({
+        email: formData.email,
+        password: formData.password,
+      });
+
+      console.log("Login successful:", userData);
+
+      // Redirect to home page after successful login
+      navigate("/");
+    } catch (err) {
+      console.error("Login failed:", err);
+      setLoginError(
+        err.message || "Invalid email or password. Please try again."
+      );
+    }
   };
 
   return (
@@ -49,6 +69,15 @@ const LoginPage = () => {
 
           {/* Card body */}
           <div className="p-6">
+            {/* Error message display */}
+            {(loginError || error) && (
+              <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+                {loginError ||
+                  (error && error.message) ||
+                  "An error occurred during login."}
+              </div>
+            )}
+
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Email Field */}
               <div>
@@ -163,9 +192,12 @@ const LoginPage = () => {
               <div>
                 <button
                   type="submit"
-                  className="w-full py-3 px-4 bg-black hover:bg-gray-900 text-white font-bold rounded-md shadow-sm transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
+                  disabled={loading}
+                  className={`w-full py-3 px-4 bg-black hover:bg-gray-900 text-white font-bold rounded-md shadow-sm transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 ${
+                    loading ? "opacity-70 cursor-not-allowed" : ""
+                  }`}
                 >
-                  Sign In
+                  {loading ? "Signing In..." : "Sign In"}
                 </button>
               </div>
 

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router";
 
 const NewsPage = () => {
   const [activeCategory, setActiveCategory] = useState("all");
@@ -284,51 +285,60 @@ const NewsPage = () => {
               {filteredArticles.map((article) => (
                 <div
                   key={article.id}
-                  className="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:shadow-lg hover:-translate-y-1 border border-gray-100"
+                  className="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:shadow-lg hover:-translate-y-1"
                 >
-                  <img
-                    src={article.image}
-                    alt={article.title}
-                    className="w-full h-48 object-cover"
-                  />
-                  <div className="p-6">
-                    <div className="flex justify-between items-center mb-4">
-                      <span className="text-sm text-gray-500">
-                        {formatDate(article.date)}
-                      </span>
-                      <span className="text-xs bg-gray-200 px-2 py-1 rounded capitalize">
-                        {article.category}
-                      </span>
-                    </div>
-                    <h3 className="text-xl font-semibold mb-2">
-                      {article.title}
-                    </h3>
-                    <p className="text-gray-700 mb-4 line-clamp-2">
-                      {article.summary}
-                    </p>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-500">
-                        By {article.author}
-                      </span>
-                      <button className="text-yellow-500 font-semibold hover:text-yellow-400 transition-colors duration-200 inline-flex items-center">
-                        Read More
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-4 w-4 ml-1"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M14 5l7 7m0 0l-7 7m7-7H3"
+                  <Link to={`/news/article/${article.id}`} className="block">
+                    <img
+                      src={article.image}
+                      alt={article.title}
+                      className="w-full h-48 object-cover"
+                    />
+                    <div className="p-6">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="bg-purple-100 text-purple-800 text-xs font-medium px-2.5 py-0.5 rounded">
+                          {article.category}
+                        </span>
+                        <span className="text-gray-500 text-sm">
+                          {formatDate(article.date)}
+                        </span>
+                      </div>
+                      <h3 className="text-xl font-semibold mb-2 hover:text-yellow-600 transition-colors">
+                        {article.title}
+                      </h3>
+                      <p className="text-gray-700 mb-4 line-clamp-3">
+                        {article.summary}
+                      </p>
+                      <div className="flex justify-between items-center">
+                        <div className="flex items-center">
+                          <img
+                            src={article.author.image}
+                            alt={article.author.name}
+                            className="w-8 h-8 rounded-full mr-2"
                           />
-                        </svg>
-                      </button>
+                          <span className="text-sm text-gray-600">
+                            {article.author.name}
+                          </span>
+                        </div>
+                        <div className="flex items-center text-gray-500">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-5 w-5 mr-1"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905a3.61 3.61 0 01-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"
+                            />
+                          </svg>
+                          <span>{article.upvotes}</span>
+                        </div>
+                      </div>
                     </div>
-                  </div>
+                  </Link>
                 </div>
               ))}
             </div>

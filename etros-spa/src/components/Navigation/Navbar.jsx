@@ -93,6 +93,12 @@ const Navbar = () => {
           <div className="hidden md:block">
             <div className="ml-4 flex items-center md:ml-6">
               <Link
+                to="/admin"
+                className="text-white hover:text-yellow-400 px-4 py-2 text-sm font-medium transition-colors duration-200"
+              >
+                Admin
+              </Link>
+              <Link
                 to="/login"
                 className="text-white hover:text-yellow-400 px-4 py-2 text-sm font-medium transition-colors duration-200"
               >
@@ -189,6 +195,12 @@ const Navbar = () => {
         </div>
         <div className="pt-4 pb-3 border-t border-gray-800">
           <div className="px-2 space-y-1">
+            <Link
+              to="/admin"
+              className="block px-3 py-2 text-base font-medium text-white hover:text-yellow-400"
+            >
+              Admin
+            </Link>
             <Link
               to="/login"
               className="block px-3 py-2 text-base font-medium text-white hover:text-yellow-400"
