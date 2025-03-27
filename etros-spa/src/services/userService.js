@@ -1,4 +1,4 @@
-import { registerUser, loginUser, getUserProfile } from "../api/auth";
+import { registerUser, loginUser, getUserProfile } from "../api/authApi";
 
 export { registerUser, loginUser, getUserProfile };
 

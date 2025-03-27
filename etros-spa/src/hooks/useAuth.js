@@ -1,6 +1,6 @@
 import { useCallback } from "react";
-import { registerUser, loginUser } from "../api/auth";
-import { useUser } from "../context/UserContext";
+import { registerUser, loginUser } from "../api/authApi";
+import useUser from "./useUser";
 
 export const useAuth = () => {
   const { login, logout, user, loading, isAuthenticated } = useUser();

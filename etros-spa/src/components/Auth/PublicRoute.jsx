@@ -1,5 +1,5 @@
 import { Navigate, useLocation } from "react-router";
-import { useUser } from "../../context/UserContext";
+import useUser from "../../hooks/useUser";
 
 const PublicRoute = ({ children }) => {
   const { isAuthenticated, loading } = useUser();

@@ -6,4 +6,11 @@ export const API_ENDPOINTS = {
     register: "/auth/register",
     user: "/auth/user",
   },
+  articles: {
+    getAll: "/articles",
+    getById: "/articles/:id",
+    create: "/articles",
+    update: "/articles/:id",
+    delete: "/articles/:id",
+  },
 };
