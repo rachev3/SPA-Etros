@@ -217,14 +217,6 @@ const AdminLayout = () => {
           <div className="flex items-center">
             <div className="relative">
               <span className="text-sm text-gray-600 mr-2">Admin User</span>
-              <img
-                className="h-10 w-10 rounded-full bg-gray-200"
-                src="/admin-avatar.png"
-                alt="Admin"
-                onError={(e) => {
-                  e.target.src = "https://via.placeholder.com/40";
-                }}
-              />
             </div>
           </div>
         </header>
