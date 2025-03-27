@@ -16,6 +16,9 @@ import PlayersManagement from "./components/Admin/PlayersManagement";
 import PlayerStatisticsManagement from "./components/Admin/PlayerStatisticsManagement";
 import { UserProvider } from "./context/UserContext";
 import { BrowserRouter as Router, Routes, Route } from "react-router";
+import ProtectedRoute from "./components/Auth/ProtectedRoute";
+import AdminRoute from "./components/Auth/AdminRoute";
+import PublicRoute from "./components/Auth/PublicRoute";
 
 function App() {
   return (
@@ -23,7 +26,14 @@ function App() {
       <Router>
         <Routes>
           {/* Admin Routes with Admin Layout */}
-          <Route path="/admin" element={<AdminLayout />}>
+          <Route
+            path="/admin"
+            element={
+              <AdminRoute>
+                <AdminLayout />
+              </AdminRoute>
+            }
+          >
             <Route index element={<NewsManagement />} />
             <Route path="news" element={<NewsManagement />} />
             <Route path="matches" element={<MatchesManagement />} />
@@ -43,8 +53,24 @@ function App() {
             <Route path="/news" element={<NewsPage />} />
             <Route path="/news/article/:id" element={<ArticlePage />} />
             <Route path="/about" element={<AboutPage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
+
+            {/* Auth Routes */}
+            <Route
+              path="/login"
+              element={
+                <PublicRoute>
+                  <LoginPage />
+                </PublicRoute>
+              }
+            />
+            <Route
+              path="/register"
+              element={
+                <PublicRoute>
+                  <RegisterPage />
+                </PublicRoute>
+              }
+            />
           </Route>
         </Routes>
       </Router>
