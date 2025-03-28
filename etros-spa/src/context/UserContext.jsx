@@ -1,7 +1,7 @@
 import { createContext, useState, useEffect } from "react";
 import {
   getCurrentUser,
-  isAuthenticated,
+  isAuthenticated as checkIsAuthenticated,
   logoutUser,
 } from "../services/userService";
 
@@ -14,7 +14,8 @@ export const UserProvider = ({ children }) => {
   useEffect(() => {
     // Check if user is authenticated and load user data on mount
     const loadUser = () => {
-      if (isAuthenticated()) {
+      if (checkIsAuthenticated()) {
+        // Get user data from localStorage
         const userData = getCurrentUser();
         setUser(userData);
       }
@@ -24,8 +25,13 @@ export const UserProvider = ({ children }) => {
     loadUser();
   }, []);
 
-  const login = (userData) => {
-    setUser(userData);
+  const login = (responseData) => {
+    // responseData is from API which has { data: { user info } } structure
+    if (responseData && responseData.data) {
+      setUser(responseData.data);
+    } else {
+      setUser(responseData);
+    }
   };
 
   const logout = () => {
@@ -33,12 +39,13 @@ export const UserProvider = ({ children }) => {
     setUser(null);
   };
 
+  // Provide the complete context value
   const value = {
     user,
     loading,
     login,
     logout,
-    isAuthenticated: !!user,
+    isAuthenticated: checkIsAuthenticated(),
   };
 
   return (

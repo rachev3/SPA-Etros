@@ -38,7 +38,7 @@ export const usePlayer = (playerId) => {
         setLoading(true);
         const url = API_ENDPOINTS.players.getById.replace(":id", playerId);
         const response = await apiClient.get(url);
-        setPlayer(response.data);
+        setPlayer(response.data.data);
       } catch (err) {
         setError(err.message || "Failed to fetch player");
       } finally {
@@ -67,8 +67,6 @@ export const useCreatePlayer = () => {
         bornYear: Number(playerData.bornYear),
         weight: playerData.weight ? Number(playerData.weight) : undefined,
       };
-
-      console.log("Sending player data to API:", formattedData);
 
       const response = await apiClient.post(
         API_ENDPOINTS.players.create,

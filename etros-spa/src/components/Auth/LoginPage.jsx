@@ -36,8 +36,6 @@ const LoginPage = () => {
         password: formData.password,
       });
 
-      console.log("Login successful:", userData);
-
       // Redirect to home page after successful login
       navigate("/");
     } catch (err) {

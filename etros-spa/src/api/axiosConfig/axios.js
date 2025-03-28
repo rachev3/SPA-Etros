@@ -13,12 +13,6 @@ const apiClient = axios.create({
 apiClient.interceptors.request.use(
   (config) => {
     // Debug request
-    console.log(`API Request to ${config.url}:`, {
-      method: config.method,
-      url: config.url,
-      data: config.data,
-      headers: config.headers,
-    });
 
     const token = localStorage.getItem("token");
     if (token) {
@@ -35,11 +29,7 @@ apiClient.interceptors.request.use(
 // Response interceptor for handling common error patterns
 apiClient.interceptors.response.use(
   (response) => {
-    // Debug response
-    console.log(`Response from ${response.config.url}:`, {
-      status: response.status,
-      data: response.data,
-    });
+    console.log("API Response:", response);
     return response;
   },
   (error) => {

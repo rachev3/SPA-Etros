@@ -189,29 +189,33 @@ const PlayersManagement = () => {
 
       {/* Create Modal */}
       {isAddModalOpen && (
-        <CreatePlayerModal
-          onClose={() => setIsAddModalOpen(false)}
-          onPlayerCreated={async () => {
-            await refetch();
-            setIsAddModalOpen(false);
-          }}
-        />
+        <div className="fixed inset-0 bg-gray-600/20 backdrop-blur-sm flex items-center justify-center z-50">
+          <CreatePlayerModal
+            onClose={() => setIsAddModalOpen(false)}
+            onPlayerCreated={async () => {
+              await refetch();
+              setIsAddModalOpen(false);
+            }}
+          />
+        </div>
       )}
 
       {/* Edit Modal */}
       {isEditModalOpen && currentPlayer && (
-        <EditPlayerModal
-          player={currentPlayer}
-          onClose={() => {
-            setIsEditModalOpen(false);
-            setCurrentPlayer(null);
-          }}
-          onPlayerUpdated={async () => {
-            await refetch();
-            setIsEditModalOpen(false);
-            setCurrentPlayer(null);
-          }}
-        />
+        <div className="fixed inset-0 bg-gray-600/20 backdrop-blur-sm flex items-center justify-center z-50">
+          <EditPlayerModal
+            player={currentPlayer}
+            onClose={() => {
+              setIsEditModalOpen(false);
+              setCurrentPlayer(null);
+            }}
+            onPlayerUpdated={async () => {
+              await refetch();
+              setIsEditModalOpen(false);
+              setCurrentPlayer(null);
+            }}
+          />
+        </div>
       )}
     </div>
   );

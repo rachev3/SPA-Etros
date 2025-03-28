@@ -128,7 +128,7 @@ const Navbar = () => {
                   </Link>
                 </>
               )}
-              {isAuthenticated && user?.role === "admin" && (
+              {isAuthenticated && user && user.role === "admin" && (
                 <Link
                   to="/admin"
                   className="text-white hover:text-yellow-400 px-4 py-2 text-sm font-medium transition-colors duration-200"
@@ -262,7 +262,7 @@ const Navbar = () => {
               </Link>
             </>
           )}
-          {isAuthenticated && user?.role === "admin" && (
+          {isAuthenticated && user && user.role === "admin" && (
             <Link
               to="/admin"
               className="text-white hover:text-yellow-400 block px-3 py-2 rounded-md text-base font-medium"

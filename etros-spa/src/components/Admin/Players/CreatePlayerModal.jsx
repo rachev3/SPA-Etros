@@ -49,11 +49,8 @@ const CreatePlayerModal = ({ onClose, onPlayerCreated }) => {
       if (formData.weight) payload.weight = Number(formData.weight);
       if (formData.imageUrl) payload.imageUrl = formData.imageUrl;
 
-      console.log("Sending player data:", payload);
-
       // Make API call
       const result = await create(payload);
-      console.log("Create player success:", result);
 
       onPlayerCreated(result);
       onClose();
@@ -128,7 +125,7 @@ const CreatePlayerModal = ({ onClose, onPlayerCreated }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-gray-600/20 backdrop-blur-sm flex items-center justify-center z-50">
       <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full">
         <div className="flex justify-between items-center border-b p-4">
           <h3 className="text-lg font-medium">Add New Player</h3>
