@@ -1,6 +1,8 @@
 import React, { useState } from "react";
+import { useCreateArticle } from "../../../api/articleApi";
 
-const AddArticleModal = ({ onClose, onSave }) => {
+const AddArticleModal = ({ onClose, onSuccess }) => {
+  const { create } = useCreateArticle();
   const [article, setArticle] = useState({
     title: "",
     content: "",
@@ -11,9 +13,15 @@ const AddArticleModal = ({ onClose, onSave }) => {
     images: [],
   });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onSave(article);
+    try {
+      await create(article);
+      onSuccess();
+      onClose();
+    } catch (err) {
+      console.error("Failed to create article:", err);
+    }
   };
 
   return (

@@ -1,30 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { useParams, Link } from "react-router";
-import { getArticleById } from "../../services/articleService";
+import { useArticle } from "../../api/articleApi";
 import { formatLongDate, formatTime } from "../../utils/dateUtils";
 
 const ArticlePage = () => {
   const { id } = useParams();
-  const [article, setArticle] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  // Fetch article data
-  useEffect(() => {
-    const fetchArticle = async () => {
-      try {
-        setLoading(true);
-        const data = await getArticleById(id);
-        setArticle(data);
-      } catch (err) {
-        setError(err.message || "Failed to fetch article");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchArticle();
-  }, [id]);
+  const { article, loading, error } = useArticle(id);
 
   // Loading state
   if (loading) {

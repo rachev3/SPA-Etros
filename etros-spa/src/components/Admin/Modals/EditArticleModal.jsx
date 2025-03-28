@@ -1,16 +1,69 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+import { useArticle, useUpdateArticle } from "../../../api/articleApi";
 
-const EditArticleModal = ({ article: initialArticle, onClose, onSave }) => {
-  const [article, setArticle] = useState(initialArticle);
+const EditArticleModal = ({ articleId, onClose, onSuccess }) => {
+  const { article, loading, error } = useArticle(articleId);
+  const { update } = useUpdateArticle();
+  const [formData, setFormData] = useState({
+    title: "",
+    content: "",
+    metaTitle: "",
+    metaDescription: "",
+    images: [],
+  });
 
-  useEffect(() => {
-    setArticle(initialArticle);
-  }, [initialArticle]);
+  // Update form data when article is loaded
+  React.useEffect(() => {
+    if (article) {
+      setFormData({
+        title: article.title,
+        content: article.content,
+        metaTitle: article.metaTitle,
+        metaDescription: article.metaDescription,
+        images: article.images,
+      });
+    }
+  }, [article]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onSave(article);
+    try {
+      await update(articleId, formData);
+      onSuccess();
+      onClose();
+    } catch (err) {
+      console.error("Failed to update article:", err);
+    }
   };
+
+  if (loading) {
+    return (
+      <div className="fixed inset-0 bg-gray-600/20 backdrop-blur-sm flex items-center justify-center z-50">
+        <div className="bg-white rounded-lg p-6">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-500"></div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="fixed inset-0 bg-gray-600/20 backdrop-blur-sm flex items-center justify-center z-50">
+        <div className="bg-white rounded-lg p-6">
+          <p className="text-red-600 mb-4">{error}</p>
+          <button
+            onClick={onClose}
+            className="px-4 py-2 bg-gray-200 rounded-lg"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // If article is not yet loaded, return null to avoid rendering
+  if (!article) return null;
 
   return (
     <div className="fixed inset-0 bg-gray-600/20 backdrop-blur-sm flex items-center justify-center z-50">
@@ -43,9 +96,9 @@ const EditArticleModal = ({ article: initialArticle, onClose, onSave }) => {
               <input
                 type="text"
                 className="w-full border border-gray-300 rounded-lg px-3 py-2"
-                value={article.title}
+                value={formData.title}
                 onChange={(e) =>
-                  setArticle({ ...article, title: e.target.value })
+                  setFormData({ ...formData, title: e.target.value })
                 }
                 required
               />
@@ -58,9 +111,9 @@ const EditArticleModal = ({ article: initialArticle, onClose, onSave }) => {
               <textarea
                 className="w-full border border-gray-300 rounded-lg px-3 py-2"
                 rows="10"
-                value={article.content}
+                value={formData.content}
                 onChange={(e) =>
-                  setArticle({ ...article, content: e.target.value })
+                  setFormData({ ...formData, content: e.target.value })
                 }
                 required
               ></textarea>
@@ -73,9 +126,9 @@ const EditArticleModal = ({ article: initialArticle, onClose, onSave }) => {
               <input
                 type="text"
                 className="w-full border border-gray-300 rounded-lg px-3 py-2"
-                value={article.metaTitle}
+                value={formData.metaTitle}
                 onChange={(e) =>
-                  setArticle({ ...article, metaTitle: e.target.value })
+                  setFormData({ ...formData, metaTitle: e.target.value })
                 }
               />
             </div>
@@ -87,9 +140,9 @@ const EditArticleModal = ({ article: initialArticle, onClose, onSave }) => {
               <textarea
                 className="w-full border border-gray-300 rounded-lg px-3 py-2"
                 rows="3"
-                value={article.metaDescription}
+                value={formData.metaDescription}
                 onChange={(e) =>
-                  setArticle({ ...article, metaDescription: e.target.value })
+                  setFormData({ ...formData, metaDescription: e.target.value })
                 }
               ></textarea>
             </div>
@@ -101,10 +154,10 @@ const EditArticleModal = ({ article: initialArticle, onClose, onSave }) => {
               <textarea
                 className="w-full border border-gray-300 rounded-lg px-3 py-2"
                 rows="3"
-                value={article.images?.join("\n") || ""}
+                value={formData.images?.join("\n") || ""}
                 onChange={(e) =>
-                  setArticle({
-                    ...article,
+                  setFormData({
+                    ...formData,
                     images: e.target.value
                       .split("\n")
                       .filter((url) => url.trim()),

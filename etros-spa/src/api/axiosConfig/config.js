@@ -13,4 +13,11 @@ export const API_ENDPOINTS = {
     update: "/articles/:id",
     delete: "/articles/:id",
   },
+  players: {
+    getAll: "/players",
+    getById: "/players/:id",
+    create: "/players",
+    update: "/players/:id",
+    delete: "/players/:id",
+  },
 };

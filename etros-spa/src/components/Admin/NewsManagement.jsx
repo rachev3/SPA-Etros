@@ -1,71 +1,33 @@
-import React, { useState, useEffect } from "react";
-import {
-  getAllArticles,
-  createArticle,
-  updateArticle,
-  deleteArticle,
-} from "../../api/articleApi";
+import React, { useState } from "react";
+import { useArticles, useDeleteArticle } from "../../api/articleApi";
 import { formatLongDate } from "../../utils/dateUtils";
 import AddArticleModal from "./Modals/AddArticleModal";
 import EditArticleModal from "./Modals/EditArticleModal";
 
 const NewsManagement = () => {
-  const [articles, setArticles] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { articles, loading, error, refetch } = useArticles();
+  const { deleteArticle } = useDeleteArticle();
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [currentArticle, setCurrentArticle] = useState(null);
+  const [editArticleId, setEditArticleId] = useState(null);
   const [deleteConfirmId, setDeleteConfirmId] = useState(null);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    fetchArticles();
-  }, []);
-
-  const fetchArticles = async () => {
-    try {
-      setLoading(true);
-      const data = await getAllArticles();
-      setArticles(data);
-      setError(null);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleAddNew = () => {
     setIsAddModalOpen(true);
   };
 
-  const handleEdit = (article) => {
-    setCurrentArticle({ ...article });
+  const handleEdit = (articleId) => {
+    setEditArticleId(articleId);
     setIsEditModalOpen(true);
   };
 
   const handleDelete = async (id) => {
     try {
       await deleteArticle(id);
-      await fetchArticles();
+      await refetch();
       setDeleteConfirmId(null);
     } catch (err) {
-      setError(err.message);
-    }
-  };
-
-  const handleSave = async (article, isNew = false) => {
-    try {
-      if (isNew) {
-        await createArticle(article);
-      } else {
-        await updateArticle(article._id, article);
-      }
-      await fetchArticles();
-      setIsAddModalOpen(false);
-      setIsEditModalOpen(false);
-    } catch (err) {
-      setError(err.message);
+      console.error("Failed to delete article:", err);
     }
   };
 
@@ -83,7 +45,7 @@ const NewsManagement = () => {
         <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative">
           <span className="block sm:inline">{error}</span>
           <button
-            onClick={fetchArticles}
+            onClick={refetch}
             className="ml-2 text-sm underline hover:text-red-800"
           >
             Try Again
@@ -156,7 +118,7 @@ const NewsManagement = () => {
                   ) : (
                     <div>
                       <button
-                        onClick={() => handleEdit(article)}
+                        onClick={() => handleEdit(article._id)}
                         className="text-blue-600 hover:text-blue-900 mr-3"
                       >
                         Edit
@@ -180,15 +142,18 @@ const NewsManagement = () => {
       {isAddModalOpen && (
         <AddArticleModal
           onClose={() => setIsAddModalOpen(false)}
-          onSave={(article) => handleSave(article, true)}
+          onSuccess={refetch}
         />
       )}
 
-      {isEditModalOpen && currentArticle && (
+      {isEditModalOpen && editArticleId && (
         <EditArticleModal
-          article={currentArticle}
-          onClose={() => setIsEditModalOpen(false)}
-          onSave={(article) => handleSave(article, false)}
+          articleId={editArticleId}
+          onClose={() => {
+            setIsEditModalOpen(false);
+            setEditArticleId(null);
+          }}
+          onSuccess={refetch}
         />
       )}
     </div>

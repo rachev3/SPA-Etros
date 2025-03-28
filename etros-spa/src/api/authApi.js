@@ -1,6 +1,6 @@
-import apiClient from "./axios";
+import apiClient from "./axiosConfig/axios";
 import { handleApiError } from "./errorHandler";
-import { API_ENDPOINTS } from "./config";
+import { API_ENDPOINTS } from "./axiosConfig/config";
 
 export const registerUser = async (userData) => {
   try {

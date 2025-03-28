@@ -1,29 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Link } from "react-router";
-import { getAllArticles } from "../../services/articleService";
+import { useArticles } from "../../api/articleApi";
 import { formatLongDate } from "../../utils/dateUtils";
 
 const NewsPage = () => {
-  const [articles, setArticles] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  // Fetch articles on component mount
-  useEffect(() => {
-    const fetchArticles = async () => {
-      try {
-        setLoading(true);
-        const data = await getAllArticles();
-        setArticles(data);
-      } catch (err) {
-        setError(err.message || "Failed to fetch articles");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchArticles();
-  }, []);
+  const { articles, loading, error } = useArticles();
 
   // Loading state
   if (loading) {
