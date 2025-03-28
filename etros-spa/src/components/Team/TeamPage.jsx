@@ -1,90 +1,11 @@
 import React from "react";
 import { Link } from "react-router";
+import { usePlayers } from "../../api/playerApi";
 
 const TeamPage = () => {
-  // Mock data for players
-  const players = [
-    {
-      id: 1,
-      name: "Michael Johnson",
-      position: "Point Guard",
-      number: 23,
-      image: "https://placehold.co/300x400/111/333?text=Player",
-      stats: {
-        ppg: "22.5",
-        rpg: "4.2",
-        apg: "8.3",
-      },
-      bio: "Michael is our star point guard, known for his incredible court vision and leadership abilities.",
-    },
-    {
-      id: 2,
-      name: "David Williams",
-      position: "Shooting Guard",
-      number: 8,
-      image: "https://placehold.co/300x400/111/333?text=Player",
-      stats: {
-        ppg: "18.7",
-        rpg: "3.1",
-        apg: "2.8",
-      },
-      bio: "David is a sharp-shooter with exceptional three-point accuracy and defensive skills.",
-    },
-    {
-      id: 3,
-      name: "Chris Thompson",
-      position: "Small Forward",
-      number: 15,
-      image: "https://placehold.co/300x400/111/333?text=Player",
-      stats: {
-        ppg: "15.2",
-        rpg: "6.7",
-        apg: "3.5",
-      },
-      bio: "Chris brings versatility and athleticism to the team, excelling on both sides of the court.",
-    },
-    {
-      id: 4,
-      name: "Robert Davis",
-      position: "Power Forward",
-      number: 34,
-      image: "https://placehold.co/300x400/111/333?text=Player",
-      stats: {
-        ppg: "12.8",
-        rpg: "10.3",
-        apg: "1.9",
-      },
-      bio: "Robert is our defensive anchor, dominant on the boards and protecting the rim.",
-    },
-    {
-      id: 5,
-      name: "John Martinez",
-      position: "Center",
-      number: 42,
-      image: "https://placehold.co/300x400/111/333?text=Player",
-      stats: {
-        ppg: "14.3",
-        rpg: "11.2",
-        apg: "1.2",
-      },
-      bio: "John controls the paint with his size and strength, providing a strong inside presence.",
-    },
-    {
-      id: 6,
-      name: "Kevin Wilson",
-      position: "Sixth Man",
-      number: 10,
-      image: "https://placehold.co/300x400/111/333?text=Player",
-      stats: {
-        ppg: "13.1",
-        rpg: "4.5",
-        apg: "3.7",
-      },
-      bio: "Kevin provides a spark off the bench with his scoring ability and endless energy.",
-    },
-  ];
+  const { players, loading, error } = usePlayers();
 
-  // Mock data for coaches
+  // Mock data for coaches (keeping this for now)
   const coaches = [
     {
       id: 1,
@@ -108,6 +29,25 @@ const TeamPage = () => {
       bio: "Mark ensures our players stay in peak physical condition throughout the season.",
     },
   ];
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-yellow-400"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-red-600 mb-4">Error</h2>
+          <p className="text-gray-600">{error}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white">
@@ -191,13 +131,16 @@ const TeamPage = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {players.map((player) => (
               <div
-                key={player.id}
+                key={player._id}
                 className="bg-white rounded-lg overflow-hidden shadow-md transition-transform duration-300 hover:-translate-y-1 hover:shadow-lg"
               >
-                <Link to={`/team/player/${player.id}`} className="block">
+                <Link to={`/team/player/${player._id}`} className="block">
                   <div className="relative">
                     <img
-                      src={player.image}
+                      src={
+                        player.imageUrl ||
+                        "https://placehold.co/300x400/111/333?text=Player"
+                      }
                       alt={player.name}
                       className="w-full h-80 object-cover"
                     />
@@ -211,26 +154,26 @@ const TeamPage = () => {
                     <h3 className="text-xl font-bold text-gray-900">
                       {player.name}
                     </h3>
-                    <p className="text-gray-600">{player.position}</p>
+                    <p className="text-gray-600">
+                      {player.position?.join(", ")}
+                    </p>
 
                     <div className="mt-4 border-t border-gray-200 pt-4">
-                      <div className="grid grid-cols-3 gap-2 text-center">
+                      <div className="grid grid-cols-2 gap-2 text-center">
                         <div>
-                          <p className="text-gray-500 text-xs uppercase">PPG</p>
+                          <p className="text-gray-500 text-xs uppercase">
+                            Height
+                          </p>
                           <p className="font-bold text-gray-900">
-                            {player.stats.ppg}
+                            {player.height || "N/A"}
                           </p>
                         </div>
                         <div>
-                          <p className="text-gray-500 text-xs uppercase">RPG</p>
-                          <p className="font-bold text-gray-900">
-                            {player.stats.rpg}
+                          <p className="text-gray-500 text-xs uppercase">
+                            Weight
                           </p>
-                        </div>
-                        <div>
-                          <p className="text-gray-500 text-xs uppercase">APG</p>
                           <p className="font-bold text-gray-900">
-                            {player.stats.apg}
+                            {player.weight ? `${player.weight} lbs` : "N/A"}
                           </p>
                         </div>
                       </div>
@@ -239,9 +182,11 @@ const TeamPage = () => {
                 </Link>
 
                 <div className="bg-gray-50 px-5 py-3 flex justify-between items-center">
-                  <p className="text-sm text-gray-600">{player.bio}</p>
+                  <p className="text-sm text-gray-600">
+                    Born: {player.bornYear}
+                  </p>
                   <Link
-                    to={`/team/player/${player.id}`}
+                    to={`/team/player/${player._id}`}
                     className="text-purple-700 hover:text-purple-500 text-sm font-medium inline-flex items-center"
                   >
                     View Profile

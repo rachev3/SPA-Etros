@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { useArticles, useDeleteArticle } from "../../api/articleApi";
-import { formatLongDate } from "../../utils/dateUtils";
-import AddArticleModal from "./Modals/AddArticleModal";
-import EditArticleModal from "./Modals/EditArticleModal";
+import { useArticles, useDeleteArticle } from "../../../api/articleApi";
+import { formatLongDate } from "../../../utils/dateUtils";
+import AddArticleModal from "./AddArticleModal";
+import EditArticleModal from "./EditArticleModal";
 
 const NewsManagement = () => {
   const { articles, loading, error, refetch } = useArticles();

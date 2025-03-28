@@ -12,6 +12,14 @@ const apiClient = axios.create({
 // Request interceptor for adding auth token
 apiClient.interceptors.request.use(
   (config) => {
+    // Debug request
+    console.log(`API Request to ${config.url}:`, {
+      method: config.method,
+      url: config.url,
+      data: config.data,
+      headers: config.headers,
+    });
+
     const token = localStorage.getItem("token");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -19,6 +27,7 @@ apiClient.interceptors.request.use(
     return config;
   },
   (error) => {
+    console.error("Request interceptor error:", error);
     return Promise.reject(error);
   }
 );
@@ -26,9 +35,22 @@ apiClient.interceptors.request.use(
 // Response interceptor for handling common error patterns
 apiClient.interceptors.response.use(
   (response) => {
+    // Debug response
+    console.log(`Response from ${response.config.url}:`, {
+      status: response.status,
+      data: response.data,
+    });
     return response;
   },
   (error) => {
+    // Debug error response
+    console.error("API Error Response:", {
+      url: error.config?.url,
+      method: error.config?.method,
+      status: error.response?.status,
+      data: error.response?.data,
+    });
+
     // Handle different error scenarios
     const { response } = error;
 
