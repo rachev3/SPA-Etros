@@ -11,7 +11,7 @@ export const useArticles = () => {
     try {
       setLoading(true);
       const response = await apiClient.get(API_ENDPOINTS.articles.getAll);
-      setArticles(response.data);
+      setArticles(response.data.data);
       setError(null);
     } catch (err) {
       setError(err.message || "Failed to fetch articles");
@@ -38,7 +38,7 @@ export const useArticle = (articleId) => {
         setLoading(true);
         const url = API_ENDPOINTS.articles.getById.replace(":id", articleId);
         const response = await apiClient.get(url);
-        setArticle(response.data);
+        setArticle(response.data.data);
       } catch (err) {
         setError(err.message || "Failed to fetch article");
       } finally {
@@ -59,7 +59,7 @@ export const useCreateArticle = () => {
         API_ENDPOINTS.articles.create,
         articleData
       );
-      return response.data;
+      return response.data.data;
     } catch (err) {
       throw new Error(
         err?.response?.data?.message ||
@@ -80,7 +80,7 @@ export const useUpdateArticle = () => {
         ...articleData,
         _id: articleId,
       });
-      return response.data;
+      return response.data.data;
     } catch (err) {
       throw new Error(
         err?.response?.data?.message ||
@@ -98,7 +98,7 @@ export const useDeleteArticle = () => {
     const url = API_ENDPOINTS.articles.delete.replace(":id", articleId);
     try {
       const response = await apiClient.delete(url);
-      return response.data;
+      return response.data.data;
     } catch (err) {
       throw new Error(
         err?.response?.data?.message ||
