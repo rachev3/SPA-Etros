@@ -21,7 +21,6 @@ export const loginUser = async (credentials) => {
       credentials
     );
 
-    // Store the token and user data in localStorage for persistence
     if (response.data && response.data.data.token) {
       localStorage.setItem("token", response.data.data.token);
       localStorage.setItem("user", JSON.stringify(response.data.data));

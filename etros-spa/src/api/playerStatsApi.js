@@ -94,7 +94,6 @@ export const useCreatePlayerStats = () => {
     } catch (error) {
       console.error("Error in createPlayerStats:", error);
     }
-    throw error;
   };
 
   return { create };

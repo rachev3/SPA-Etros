@@ -1,9 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import apiClient from "./axiosConfig/axios";
-// import { handleApiError } from "./errorHandler";
 import { API_ENDPOINTS } from "./axiosConfig/config";
 
-// Hooks
 export const useMatches = () => {
   const [matches, setMatches] = useState([]);
   const [loading, setLoading] = useState(true);

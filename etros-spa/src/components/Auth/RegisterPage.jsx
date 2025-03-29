@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router";
 import { useAuth } from "../../hooks/useAuth";
 
 const RegisterPage = () => {
-  const { register, loading, error } = useAuth();
+  const { register } = useAuth();
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
 

@@ -6,23 +6,15 @@ export const useAuth = () => {
   const { login, logout, user, loading, isAuthenticated } = useUser();
 
   const register = useCallback(async (userData) => {
-    try {
-      const data = await registerUser(userData);
-      return data;
-    } catch (err) {
-      throw err;
-    }
+    const data = await registerUser(userData);
+    return data;
   }, []);
 
   const handleLogin = useCallback(
     async (credentials) => {
-      try {
-        const data = await loginUser(credentials);
-        login(data);
-        return data;
-      } catch (err) {
-        throw err;
-      }
+      const data = await loginUser(credentials);
+      login(data);
+      return data;
     },
     [login]
   );

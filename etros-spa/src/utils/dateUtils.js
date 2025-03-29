@@ -12,7 +12,7 @@ export const formatLongDate = (dateString) => {
   try {
     return date.toLocaleDateString(undefined, options);
   } catch (error) {
-    return "Invalid Date";
+    return error.message;
   }
 };
 
@@ -24,7 +24,7 @@ export const formatTime = (dateString) => {
   try {
     return date.toLocaleTimeString(undefined, options);
   } catch (error) {
-    return "Invalid Date";
+    return error.message;
   }
 };
 
@@ -42,7 +42,7 @@ export const formatDateTime = (dateString) => {
   try {
     return date.toLocaleDateString(undefined, options);
   } catch (error) {
-    return "Invalid Date";
+    return error.message;
   }
 };
 
@@ -54,6 +54,6 @@ export const formatShortDate = (dateString) => {
   try {
     return date.toLocaleDateString(undefined, options);
   } catch (error) {
-    return "Invalid Date";
+    return error.message;
   }
 };

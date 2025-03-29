@@ -245,18 +245,6 @@ const TeamPage = () => {
       </section>
 
       {/* Call to Action */}
-      <section className="py-16 px-4 bg-black text-white">
-        <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-3xl font-bold mb-4">Join Our Team</h2>
-          <p className="text-lg mb-8 text-gray-300">
-            Interested in trying out for Etros Basketball? We're always looking
-            for talented and dedicated players to join our organization.
-          </p>
-          <button className="bg-yellow-500 hover:bg-yellow-400 text-black font-bold py-3 px-8 rounded transition-colors duration-200 shadow-lg">
-            Contact Us
-          </button>
-        </div>
-      </section>
     </div>
   );
 };

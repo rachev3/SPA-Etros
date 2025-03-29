@@ -1,3 +1,5 @@
+import { Link } from "react-router";
+
 const HomePage = () => {
   return (
     <>
@@ -18,7 +20,7 @@ const HomePage = () => {
               Where Legends Are Made
             </p>
             <button className="bg-yellow-500 hover:bg-yellow-400 text-black font-bold py-3 px-8 rounded transition-colors duration-200 shadow-lg">
-              View Schedule
+              <Link to="/schedule">View Schedule</Link>
             </button>
           </div>
         </div>
@@ -276,7 +278,7 @@ const HomePage = () => {
           </div>
           <div className="text-center mt-8">
             <button className="bg-black hover:bg-gray-900 text-white font-bold py-3 px-8 rounded transition-colors duration-200 shadow-md">
-              View Full Schedule
+              <Link to="/schedule"> View Full Schedule</Link>
             </button>
           </div>
         </div>
@@ -392,30 +394,9 @@ const HomePage = () => {
               passionate fanbase. We offer various sponsorship packages tailored
               to meet your marketing objectives.
             </p>
-            <button className="bg-yellow-500 hover:bg-yellow-400 text-black font-bold py-3 px-8 rounded-lg transition-colors duration-200 shadow-md">
+            {/* <button className="bg-yellow-500 hover:bg-yellow-400 text-black font-bold py-3 px-8 rounded-lg transition-colors duration-200 shadow-md">
               Sponsorship Information
-            </button>
-          </div>
-        </div>
-      </section>
-
-      {/* Newsletter Section */}
-      <section className="py-16 px-4 bg-purple-900 text-white">
-        <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-3xl font-bold mb-4">Stay Updated</h2>
-          <p className="text-lg mb-8 text-gray-200">
-            Subscribe to our newsletter for the latest team news, ticket
-            information, and exclusive content
-          </p>
-          <div className="flex flex-col sm:flex-row gap-2 max-w-md mx-auto">
-            <input
-              type="email"
-              placeholder="Your email address"
-              className="flex-grow px-4 py-3 rounded-lg text-gray-800 focus:outline-none focus:ring-2 focus:ring-yellow-400"
-            />
-            <button className="bg-yellow-500 hover:bg-yellow-400 text-black font-bold py-3 px-6 rounded-lg transition-colors duration-200 shadow-md">
-              Subscribe
-            </button>
+            </button> */}
           </div>
         </div>
       </section>

@@ -1,9 +1,8 @@
-import { Navigate, useLocation } from "react-router";
+import { Navigate } from "react-router";
 import useUser from "../../hooks/useUser";
 
 const PublicRoute = ({ children }) => {
   const { isAuthenticated, loading } = useUser();
-  const location = useLocation();
 
   if (loading) {
     return (
@@ -14,7 +13,6 @@ const PublicRoute = ({ children }) => {
   }
 
   if (isAuthenticated) {
-    // Redirect to home page if user is already authenticated
     return <Navigate to="/" replace />;
   }
 

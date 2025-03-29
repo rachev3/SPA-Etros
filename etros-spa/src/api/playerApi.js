@@ -55,59 +55,13 @@ export const usePlayer = (playerId) => {
 export const useCreatePlayer = () => {
   const create = async (playerData) => {
     try {
-      // Basic validation before making API call
-      if (!playerData.name || !playerData.number || !playerData.bornYear) {
-        throw new Error("Required fields missing");
-      }
-
-      // Ensure data types are correct
-      const formattedData = {
-        ...playerData,
-        number: String(playerData.number),
-        bornYear: Number(playerData.bornYear),
-        weight: playerData.weight ? Number(playerData.weight) : undefined,
-      };
-
       const response = await apiClient.post(
         API_ENDPOINTS.players.create,
-        formattedData
+        playerData
       );
-
-      // Check for success field in response as per API docs
-      if (response.data && response.data.success === false) {
-        // Server returned an error in the expected format
-        const error = new Error(
-          response.data.message || "Failed to create player"
-        );
-        error.errorCode = response.data.errorCode;
-        error.details = response.data.details;
-        throw error;
-      }
-
       return response.data;
     } catch (error) {
       console.error("Error in createPlayer:", error);
-
-      // If the error already has our expected format, just rethrow it
-      if (error.errorCode) {
-        throw error;
-      }
-
-      // If it's an Axios error with response data in our format
-      if (error.response && error.response.data) {
-        const { data } = error.response;
-
-        // Check if API returned our standard error format
-        if (data.success === false && data.errorCode) {
-          const formattedError = new Error(data.message || "API Error");
-          formattedError.errorCode = data.errorCode;
-          formattedError.details = data.details;
-          formattedError.status = data.status || error.response.status;
-          throw formattedError;
-        }
-      }
-
-      // For any other type of error, just rethrow it
       throw error;
     }
   };

@@ -7,6 +7,7 @@ import { usePlayers } from "../../../api/playerApi";
 import {
   useCreatePlayerStats,
   useUpdatePlayerStats,
+  usePlayerStatsByMatchId,
 } from "../../../api/playerStatsApi";
 
 const PlayerStatisticsManagement = () => {
@@ -18,6 +19,7 @@ const PlayerStatisticsManagement = () => {
 
   // Get players for modals
   const { players } = usePlayers();
+  const { refetch: refetchStats } = usePlayerStatsByMatchId(selectedMatch?._id);
 
   // API mutation hooks
   const { create: createPlayerStats } = useCreatePlayerStats();
@@ -56,19 +58,30 @@ const PlayerStatisticsManagement = () => {
   };
 
   const handleEditStat = (stat) => {
-    setCurrentStat({ ...stat });
+    // Ensure we're using the correct player ID format
+    setCurrentStat({
+      ...stat,
+      playerId: stat.playerId.toString(),
+    });
     setIsEditModalOpen(true);
   };
 
   const handleSaveStat = async (stat, isNew = false) => {
     try {
       if (isNew) {
-        await createPlayerStats(stat);
+        await createPlayerStats({
+          ...stat,
+          playerId: parseInt(stat.playerId, 10),
+        });
         setIsAddModalOpen(false);
       } else {
-        await updatePlayerStats(stat._id, stat);
+        await updatePlayerStats(stat._id, {
+          ...stat,
+          playerId: parseInt(stat.playerId, 10),
+        });
         setIsEditModalOpen(false);
       }
+      await refetchStats();
     } catch (error) {
       console.error("Error saving stat:", error);
       alert("Failed to save statistic");

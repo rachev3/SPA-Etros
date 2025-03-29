@@ -1,9 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import apiClient from "./axiosConfig/axios";
-// import { handleApiError } from "./errorHandler";
 import { API_ENDPOINTS } from "./axiosConfig/config";
 
-// Hooks
 export const useArticles = () => {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -56,11 +54,19 @@ export const useArticle = (articleId) => {
 
 export const useCreateArticle = () => {
   const create = async (articleData) => {
-    const response = await apiClient.post(
-      API_ENDPOINTS.articles.create,
-      articleData
-    );
-    return response.data;
+    try {
+      const response = await apiClient.post(
+        API_ENDPOINTS.articles.create,
+        articleData
+      );
+      return response.data;
+    } catch (err) {
+      throw new Error(
+        err?.response?.data?.message ||
+          err.message ||
+          "Failed to create article"
+      );
+    }
   };
 
   return { create };
@@ -69,11 +75,19 @@ export const useCreateArticle = () => {
 export const useUpdateArticle = () => {
   const update = async (articleId, articleData) => {
     const url = API_ENDPOINTS.articles.update.replace(":id", articleId);
-    const response = await apiClient.put(url, {
-      ...articleData,
-      _id: articleId,
-    });
-    return response.data;
+    try {
+      const response = await apiClient.put(url, {
+        ...articleData,
+        _id: articleId,
+      });
+      return response.data;
+    } catch (err) {
+      throw new Error(
+        err?.response?.data?.message ||
+          err.message ||
+          "Failed to update article"
+      );
+    }
   };
 
   return { update };
@@ -82,60 +96,17 @@ export const useUpdateArticle = () => {
 export const useDeleteArticle = () => {
   const deleteArticle = async (articleId) => {
     const url = API_ENDPOINTS.articles.delete.replace(":id", articleId);
-    const response = await apiClient.delete(url);
-    return response.data;
+    try {
+      const response = await apiClient.delete(url);
+      return response.data;
+    } catch (err) {
+      throw new Error(
+        err?.response?.data?.message ||
+          err.message ||
+          "Failed to delete article"
+      );
+    }
   };
 
   return { deleteArticle };
 };
-
-// export const getAllArticles = async () => {
-//   try {
-//     const response = await apiClient.get(API_ENDPOINTS.articles.getAll);
-//     return response.data;
-//   } catch (error) {
-//     throw handleApiError(error);
-//   }
-// };
-
-// export const getArticleById = async (id) => {
-//   try {
-//     const url = API_ENDPOINTS.articles.getById.replace(":id", id);
-//     const response = await apiClient.get(url);
-//     return response.data;
-//   } catch (error) {
-//     throw handleApiError(error);
-//   }
-// };
-
-// export const createArticle = async (articleData) => {
-//   try {
-//     const response = await apiClient.post(
-//       API_ENDPOINTS.articles.create,
-//       articleData
-//     );
-//     return response.data;
-//   } catch (error) {
-//     throw handleApiError(error);
-//   }
-// };
-
-// export const updateArticle = async (id, articleData) => {
-//   try {
-//     const url = API_ENDPOINTS.articles.update.replace(":id", id);
-//     const response = await apiClient.put(url, articleData);
-//     return response.data;
-//   } catch (error) {
-//     throw handleApiError(error);
-//   }
-// };
-
-// export const deleteArticle = async (id) => {
-//   try {
-//     const url = API_ENDPOINTS.articles.delete.replace(":id", id);
-//     const response = await apiClient.delete(url);
-//     return response.data;
-//   } catch (error) {
-//     throw handleApiError(error);
-//   }
-// };

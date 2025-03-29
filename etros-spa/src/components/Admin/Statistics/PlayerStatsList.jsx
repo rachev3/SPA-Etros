@@ -3,18 +3,26 @@ import {
   usePlayerStatsByMatchId,
   useDeletePlayerStats,
 } from "../../../api/playerStatsApi";
+import { usePlayers } from "../../../api/playerApi";
 
 const PlayerStatsList = ({ selectedMatch, onEditStat, onAddStat }) => {
-  const { playerStats: filteredStats, loading: statsLoading } =
-    usePlayerStatsByMatchId(selectedMatch._id);
+  const {
+    playerStats: filteredStats,
+    loading: statsLoading,
+    refetch: refetchStats,
+  } = usePlayerStatsByMatchId(selectedMatch._id);
   const { deletePlayerStats } = useDeletePlayerStats();
+  const { players } = usePlayers();
   const [deleteConfirmId, setDeleteConfirmId] = React.useState(null);
 
-  console.log("filteredStats:", filteredStats);
+  const getPlayerById = (id) => {
+    return players.find((player) => player._id === id);
+  };
 
   const handleDeleteStat = async (id) => {
     try {
       await deletePlayerStats(id);
+      await refetchStats();
       setDeleteConfirmId(null);
     } catch (error) {
       console.error("Error deleting stat:", error);
@@ -76,7 +84,7 @@ const PlayerStatsList = ({ selectedMatch, onEditStat, onAddStat }) => {
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {filteredStats.map((stat) => {
-                const player = stat.player;
+                const player = getPlayerById(stat.playerId);
                 return (
                   <tr key={stat._id} className="hover:bg-gray-50">
                     <td className="px-4 py-4 whitespace-nowrap">
