@@ -2,35 +2,13 @@ import React, { useState } from "react";
 import PlayerStatsListItem from "./PlayerStatsListItem";
 import AddStatModal from "./AddStatModal";
 import EditStatModal from "./EditStatModal";
+import { useMatches } from "../../../api/matchApi";
+import { usePlayers } from "../../../api/playerApi";
 
-const PlayerStatsList = ({
-  selectedMatch,
-  onAddStatSuccess,
-  onEditStatSuccess,
-  onDeleteStat,
-}) => {
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [currentStat, setCurrentStat] = useState(null);
-
-  const handleEditStat = (stat) => {
-    setCurrentStat(stat);
-    setIsEditModalOpen(true);
-  };
-
-  // Get unique players from playerStats
-  const players = selectedMatch.playerStats
-    ? selectedMatch.playerStats
-        .map((stat) => stat.player)
-        .filter(
-          (player, index, self) =>
-            index === self.findIndex((p) => p._id === player._id)
-        )
-    : [];
-
+const PlayerStatsList = ({ stats, onEdit, onDelete }) => {
   return (
     <div className="bg-white p-4 rounded-lg shadow-sm">
-      <div className="flex justify-between items-center mb-4">
+      {/* <div className="flex justify-between items-center mb-4">
         <h2 className="text-lg font-medium">
           Player Stats for{" "}
           <span className="text-yellow-600">
@@ -43,9 +21,9 @@ const PlayerStatsList = ({
         >
           Add Player Stats
         </button>
-      </div>
+      </div> */}
 
-      {selectedMatch.playerStats && selectedMatch.playerStats.length > 0 ? (
+      {stats && stats.length > 0 ? (
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
@@ -71,13 +49,11 @@ const PlayerStatsList = ({
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {selectedMatch.playerStats.map((stat) => (
+              {stats.map((stat) => (
                 <PlayerStatsListItem
-                  key={stat._id}
                   stat={stat}
-                  player={stat.player}
-                  onEditStat={handleEditStat}
-                  onDeleteStat={onDeleteStat}
+                  onEdit={onEdit}
+                  onDelete={onDelete}
                 />
               ))}
             </tbody>
@@ -104,7 +80,7 @@ const PlayerStatsList = ({
           <p className="mt-1 text-sm text-gray-500">
             Get started by adding player statistics for this match.
           </p>
-          <div className="mt-6">
+          {/* <div className="mt-6">
             <button
               onClick={() => setIsAddModalOpen(true)}
               className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-black bg-yellow-500 hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
@@ -123,30 +99,8 @@ const PlayerStatsList = ({
               </svg>
               Add Player Stats
             </button>
-          </div>
+          </div> */}
         </div>
-      )}
-
-      {isAddModalOpen && (
-        <AddStatModal
-          matchId={selectedMatch._id}
-          players={players}
-          onClose={() => setIsAddModalOpen(false)}
-          onSuccess={onAddStatSuccess}
-        />
-      )}
-
-      {isEditModalOpen && currentStat && (
-        <EditStatModal
-          stat={currentStat}
-          players={players}
-          isOpen={isEditModalOpen}
-          onClose={() => {
-            setIsEditModalOpen(false);
-            setCurrentStat(null);
-          }}
-          onSuccess={onEditStatSuccess}
-        />
       )}
     </div>
   );

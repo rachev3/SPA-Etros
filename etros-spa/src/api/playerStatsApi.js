@@ -57,32 +57,40 @@ export const usePlayerStatsByPlayerId = (playerId) => {
 
 export const usePlayerStatsByMatchId = (matchId) => {
   const [playerStats, setPlayerStats] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchPlayerStats = async () => {
-      try {
-        setLoading(true);
-        const url = API_ENDPOINTS.playerStats.getByMatchId.replace(
-          ":id",
-          matchId
-        );
-        const response = await apiClient.get(url);
-        setPlayerStats(response.data.data);
-      } catch (err) {
-        setError(err.message || "Failed to fetch playerStats");
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchPlayerStats = useCallback(async () => {
+    if (!matchId || matchId === "no-request") {
+      setPlayerStats(null);
+      setError(null);
+      setLoading(false);
+      return;
+    }
 
-    fetchPlayerStats();
+    try {
+      setLoading(true);
+      const url = API_ENDPOINTS.playerStats.getByMatchId.replace(
+        ":id",
+        matchId
+      );
+      const response = await apiClient.get(url);
+      setPlayerStats(response.data.data);
+      setError(null);
+    } catch (err) {
+      setError(err.message || "Failed to fetch playerStats");
+      setPlayerStats(null);
+    } finally {
+      setLoading(false);
+    }
   }, [matchId]);
 
-  return { playerStats, loading, error };
-};
+  useEffect(() => {
+    fetchPlayerStats();
+  }, [fetchPlayerStats]);
 
+  return { playerStats, loading, error, refetch: fetchPlayerStats };
+};
 export const useCreatePlayerStats = () => {
   const create = async (playerStatsData) => {
     try {

@@ -22,11 +22,11 @@ const AddStatModal = ({ matchId, onClose, onSuccess }) => {
     freeThrowsAttempted: 0,
     offensiveRebounds: 0,
     defensiveRebounds: 0,
-    totalAssists: 0,
-    totalSteals: 0,
-    totalBlocks: 0,
-    totalTurnovers: 0,
-    totalFouls: 0,
+    assists: 0,
+    steals: 0,
+    blocks: 0,
+    turnovers: 0,
+    fouls: 0,
     plusMinus: 0,
   });
 
@@ -34,7 +34,7 @@ const AddStatModal = ({ matchId, onClose, onSuccess }) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
-      [name]: name === "playerId" ? value : parseInt(value, 10) || 0,
+      [name]: name === "playerId" ? value : parseInt(value) || 0,
     });
   };
 
@@ -46,63 +46,14 @@ const AddStatModal = ({ matchId, onClose, onSuccess }) => {
     }
 
     try {
-      await createPlayerStats({
-        ...formData,
-        playerId: formData.playerId,
-      });
-      onSuccess();
+      await createPlayerStats(formData);
+      await onSuccess(); // Ensure we wait for the success callback
       onClose();
     } catch (error) {
       console.error("Error saving stat:", error);
       alert("Failed to save statistic");
     }
   };
-
-  if (playersLoading) {
-    return (
-      <div className="fixed inset-0  bg-gray-600/20 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-lg p-6">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-500 mx-auto"></div>
-        </div>
-      </div>
-    );
-  }
-
-  if (playersError) {
-    return (
-      <div className="fixed inset-0  bg-gray-600/20 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-lg p-6">
-          <p className="text-red-600">
-            Failed to load players. Please try again later.
-          </p>
-          <button
-            onClick={onClose}
-            className="mt-4 px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors"
-          >
-            Close
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  if (!players || players.length === 0) {
-    return (
-      <div className="fixed inset-0 bg-gray-600/20 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-lg p-6">
-          <p className="text-gray-600">
-            No players available. Please add players first.
-          </p>
-          <button
-            onClick={onClose}
-            className="mt-4 px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors"
-          >
-            Close
-          </button>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="fixed inset-0 bg-gray-600/20 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -146,7 +97,7 @@ const AddStatModal = ({ matchId, onClose, onSuccess }) => {
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
               >
                 <option value="">Select a player</option>
-                {players.map((player) => (
+                {players?.map((player) => (
                   <option key={player._id} value={player._id}>
                     {player.name} (#{player.number})
                   </option>
@@ -312,8 +263,8 @@ const AddStatModal = ({ matchId, onClose, onSuccess }) => {
                 </label>
                 <input
                   type="number"
-                  name="totalAssists"
-                  value={formData.totalAssists}
+                  name="assists"
+                  value={formData.assists}
                   onChange={handleChange}
                   min="0"
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
@@ -325,8 +276,8 @@ const AddStatModal = ({ matchId, onClose, onSuccess }) => {
                 </label>
                 <input
                   type="number"
-                  name="totalSteals"
-                  value={formData.totalSteals}
+                  name="steals"
+                  value={formData.steals}
                   onChange={handleChange}
                   min="0"
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
@@ -338,8 +289,8 @@ const AddStatModal = ({ matchId, onClose, onSuccess }) => {
                 </label>
                 <input
                   type="number"
-                  name="totalBlocks"
-                  value={formData.totalBlocks}
+                  name="blocks"
+                  value={formData.blocks}
                   onChange={handleChange}
                   min="0"
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
@@ -355,8 +306,8 @@ const AddStatModal = ({ matchId, onClose, onSuccess }) => {
                 </label>
                 <input
                   type="number"
-                  name="totalTurnovers"
-                  value={formData.totalTurnovers}
+                  name="turnovers"
+                  value={formData.turnovers}
                   onChange={handleChange}
                   min="0"
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
@@ -368,8 +319,8 @@ const AddStatModal = ({ matchId, onClose, onSuccess }) => {
                 </label>
                 <input
                   type="number"
-                  name="totalFouls"
-                  value={formData.totalFouls}
+                  name="fouls"
+                  value={formData.fouls}
                   onChange={handleChange}
                   min="0"
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"

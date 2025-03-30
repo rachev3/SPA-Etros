@@ -17,15 +17,15 @@ const EditStatModal = ({ stat, players, isOpen, onClose, onSuccess }) => {
     freeThrowsAttempted: stat.freeThrowsAttempted || 0,
     offensiveRebounds: stat.offensiveRebounds || 0,
     defensiveRebounds: stat.defensiveRebounds || 0,
-    totalAssists: stat.totalAssists || 0,
-    totalSteals: stat.totalSteals || 0,
-    totalBlocks: stat.totalBlocks || 0,
-    totalTurnovers: stat.totalTurnovers || 0,
-    totalFouls: stat.totalFouls || 0,
+    assists: stat.assists || 0,
+    steals: stat.steals || 0,
+    blocks: stat.blocks || 0,
+    turnovers: stat.turnovers || 0,
+    fouls: stat.fouls || 0,
     plusMinus: stat.plusMinus || 0,
     // These fields are calculated on the server
     efficiency: stat.efficiency || 0,
-    totalPoints: stat.totalPoints || 0,
+    points: stat.points || 0,
   });
 
   const handleChange = (e) => {
@@ -40,7 +40,7 @@ const EditStatModal = ({ stat, players, isOpen, onClose, onSuccess }) => {
     e.preventDefault();
     try {
       // Remove calculated fields before sending to API
-      const { efficiency, totalPoints, ...statsToUpdate } = formData;
+      const { efficiency, points, ...statsToUpdate } = formData;
       await updatePlayerStats(stat._id, statsToUpdate);
       onSuccess();
       onClose();
@@ -112,7 +112,7 @@ const EditStatModal = ({ stat, players, isOpen, onClose, onSuccess }) => {
                     Total Points
                   </label>
                   <div className="mt-1 text-lg font-semibold text-yellow-600">
-                    {formData.totalPoints}
+                    {formData.points}
                   </div>
                 </div>
                 <div>
@@ -284,8 +284,8 @@ const EditStatModal = ({ stat, players, isOpen, onClose, onSuccess }) => {
                 </label>
                 <input
                   type="number"
-                  name="totalAssists"
-                  value={formData.totalAssists}
+                  name="assists"
+                  value={formData.assists}
                   onChange={handleChange}
                   min="0"
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
@@ -297,8 +297,8 @@ const EditStatModal = ({ stat, players, isOpen, onClose, onSuccess }) => {
                 </label>
                 <input
                   type="number"
-                  name="totalSteals"
-                  value={formData.totalSteals}
+                  name="steals"
+                  value={formData.steals}
                   onChange={handleChange}
                   min="0"
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
@@ -310,8 +310,8 @@ const EditStatModal = ({ stat, players, isOpen, onClose, onSuccess }) => {
                 </label>
                 <input
                   type="number"
-                  name="totalBlocks"
-                  value={formData.totalBlocks}
+                  name="blocks"
+                  value={formData.blocks}
                   onChange={handleChange}
                   min="0"
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
@@ -327,8 +327,8 @@ const EditStatModal = ({ stat, players, isOpen, onClose, onSuccess }) => {
                 </label>
                 <input
                   type="number"
-                  name="totalTurnovers"
-                  value={formData.totalTurnovers}
+                  name="turnovers"
+                  value={formData.turnovers}
                   onChange={handleChange}
                   min="0"
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
@@ -340,8 +340,8 @@ const EditStatModal = ({ stat, players, isOpen, onClose, onSuccess }) => {
                 </label>
                 <input
                   type="number"
-                  name="totalFouls"
-                  value={formData.totalFouls}
+                  name="fouls"
+                  value={formData.fouls}
                   onChange={handleChange}
                   min="0"
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"

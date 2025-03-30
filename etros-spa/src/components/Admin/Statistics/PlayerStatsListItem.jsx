@@ -1,18 +1,18 @@
 import React from "react";
 
-const PlayerStatsListItem = ({ stat, player, onEditStat, onDeleteStat }) => {
+const PlayerStatsListItem = ({ stat, onEdit, onDelete }) => {
   const [deleteConfirmId, setDeleteConfirmId] = React.useState(null);
 
   return (
     <tr key={stat._id} className="hover:bg-gray-50">
       <td className="px-4 py-4 whitespace-nowrap">
         <div className="text-sm font-medium text-gray-900">
-          {player?.name} (#{player?.number})
+          {stat.player?.name} (#{stat.player?.number})
         </div>
-        <div className="text-sm text-gray-500">{player?.position}</div>
+        <div className="text-sm text-gray-500">{stat.player?.position}</div>
       </td>
       <td className="px-4 py-4 whitespace-nowrap">
-        <div className="text-sm font-medium">{stat.totalPoints}</div>
+        <div className="text-sm font-medium">{stat.points}</div>
         <div className="text-xs text-gray-500">
           Efficiency: {stat.efficiency}
         </div>
@@ -35,15 +35,15 @@ const PlayerStatsListItem = ({ stat, player, onEditStat, onDeleteStat }) => {
       </td>
       <td className="px-4 py-4 whitespace-nowrap">
         <div className="text-sm">
-          AST: {stat.totalAssists} STL: {stat.totalSteals}
+          AST: {stat.assists} STL: {stat.steals}
         </div>
         <div className="text-xs text-gray-500">
-          BLK: {stat.totalBlocks} TO: {stat.totalTurnovers}
+          BLK: {stat.blocks} TO: {stat.turnovers}
         </div>
       </td>
       <td className="px-4 py-4 whitespace-nowrap text-right text-sm font-medium">
         <button
-          onClick={() => onEditStat(stat)}
+          onClick={() => onEdit(stat)}
           className="text-blue-600 hover:text-blue-900 mr-3"
         >
           Edit
@@ -52,7 +52,7 @@ const PlayerStatsListItem = ({ stat, player, onEditStat, onDeleteStat }) => {
           <>
             <button
               onClick={() => {
-                onDeleteStat(stat._id);
+                onDelete(stat._id);
                 setDeleteConfirmId(null);
               }}
               className="text-red-600 hover:text-red-900 mr-1"
