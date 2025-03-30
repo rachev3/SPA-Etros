@@ -1,13 +1,8 @@
 import React from "react";
 
-const PlayerStatsListItem = ({
-  stat,
-  player,
-  onEditStat,
-  onDeleteStat,
-  deleteConfirmId,
-  setDeleteConfirmId,
-}) => {
+const PlayerStatsListItem = ({ stat, player, onEditStat, onDeleteStat }) => {
+  const [deleteConfirmId, setDeleteConfirmId] = React.useState(null);
+
   return (
     <tr key={stat._id} className="hover:bg-gray-50">
       <td className="px-4 py-4 whitespace-nowrap">
@@ -56,7 +51,10 @@ const PlayerStatsListItem = ({
         {deleteConfirmId === stat._id ? (
           <>
             <button
-              onClick={() => onDeleteStat(stat._id)}
+              onClick={() => {
+                onDeleteStat(stat._id);
+                setDeleteConfirmId(null);
+              }}
               className="text-red-600 hover:text-red-900 mr-1"
             >
               Confirm

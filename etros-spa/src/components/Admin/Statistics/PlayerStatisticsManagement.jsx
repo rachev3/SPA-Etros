@@ -1,134 +1,76 @@
 import React, { useState } from "react";
-import AddStatModal from "./AddStatModal";
-import EditStatModal from "./EditStatModal";
 import MatchSelector from "./MatchSelector";
 import PlayerStatsList from "./PlayerStatsList";
-import { usePlayers } from "../../../api/playerApi";
-import {
-  useCreatePlayerStats,
-  useUpdatePlayerStats,
-  usePlayerStatsByMatchId,
-} from "../../../api/playerStatsApi";
+import { useDeletePlayerStats } from "../../../api/playerStatsApi";
+import { useMatches } from "../../../api/matchApi";
 
 const PlayerStatisticsManagement = () => {
-  // State for UI
   const [selectedMatch, setSelectedMatch] = useState(null);
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [currentStat, setCurrentStat] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
 
-  // Get players for modals
-  const { players } = usePlayers();
-  const { refetch: refetchStats } = usePlayerStatsByMatchId(selectedMatch?._id);
+  const { deletePlayerStats } = useDeletePlayerStats();
+  const {
+    matches,
+    loading: matchesLoading,
+    error: matchesError,
+    pagination,
+    refetch: refetchMatches,
+  } = useMatches(currentPage, 3, "playerStats:player");
 
-  // API mutation hooks
-  const { create: createPlayerStats } = useCreatePlayerStats();
-  const { update: updatePlayerStats } = useUpdatePlayerStats();
-
-  // Handler functions
-  const handleAddStat = () => {
-    if (!selectedMatch) {
-      alert("Please select a match first");
-      return;
-    }
-
-    setCurrentStat({
-      matchId: selectedMatch._id,
-      playerId: "",
-      fieldGoalsMade: 0,
-      fieldGoalsAttempted: 0,
-      twoPointsMade: 0,
-      twoPointsAttempted: 0,
-      threePointsMade: 0,
-      threePointsAttempted: 0,
-      freeThrowsMade: 0,
-      freeThrowsAttempted: 0,
-      offensiveRebounds: 0,
-      defensiveRebounds: 0,
-      totalAssists: 0,
-      totalSteals: 0,
-      totalBlocks: 0,
-      totalTurnovers: 0,
-      totalFouls: 0,
-      plusMinus: 0,
-      efficiency: 0,
-      totalPoints: 0,
-    });
-    setIsAddModalOpen(true);
-  };
-
-  const handleEditStat = (stat) => {
-    // Ensure we're using the correct player ID format
-    setCurrentStat({
-      ...stat,
-      playerId: stat.playerId.toString(),
-    });
-    setIsEditModalOpen(true);
-  };
-
-  const handleSaveStat = async (stat, isNew = false) => {
-    try {
-      if (isNew) {
-        await createPlayerStats({
-          ...stat,
-          playerId: parseInt(stat.playerId, 10),
-        });
-        setIsAddModalOpen(false);
-      } else {
-        await updatePlayerStats(stat._id, {
-          ...stat,
-          playerId: parseInt(stat.playerId, 10),
-        });
-        setIsEditModalOpen(false);
+  const handleSuccess = async () => {
+    await refetchMatches();
+    if (selectedMatch) {
+      const updatedMatch = matches.find((m) => m._id === selectedMatch._id);
+      if (updatedMatch) {
+        setSelectedMatch(updatedMatch);
       }
-      await refetchStats();
+    }
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      await deletePlayerStats(id);
+      await handleSuccess();
     } catch (error) {
-      console.error("Error saving stat:", error);
-      alert("Failed to save statistic");
+      console.error("Error deleting stat:", error);
+      alert("Failed to delete statistic");
     }
   };
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-gray-800">
-          Player Statistics Management
-        </h1>
-      </div>
+      <h1 className="text-2xl font-bold text-gray-800">
+        Player Statistics Management
+      </h1>
 
       <MatchSelector
         selectedMatch={selectedMatch}
         onMatchSelect={setSelectedMatch}
+        matches={matches}
+        loading={matchesLoading}
+        error={matchesError}
+        pagination={pagination}
+        onPageChange={setCurrentPage}
+        currentPage={currentPage}
       />
 
-      {selectedMatch && (
+      {selectedMatch ? (
         <PlayerStatsList
           selectedMatch={selectedMatch}
-          onEditStat={handleEditStat}
-          onAddStat={handleAddStat}
+          onAddStatSuccess={handleSuccess}
+          onEditStatSuccess={handleSuccess}
+          onDeleteStat={handleDelete}
         />
-      )}
-
-      {/* Add Stat Modal */}
-      {isAddModalOpen && (
-        <AddStatModal
-          stat={currentStat}
-          players={players}
-          isOpen={isAddModalOpen}
-          onClose={() => setIsAddModalOpen(false)}
-          onSave={(stat) => handleSaveStat(stat, true)}
-        />
-      )}
-
-      {/* Edit Stat Modal */}
-      {isEditModalOpen && (
-        <EditStatModal
-          stat={currentStat}
-          players={players}
-          isOpen={isEditModalOpen}
-          onClose={() => setIsEditModalOpen(false)}
-          onSave={handleSaveStat}
-        />
+      ) : (
+        <div className="bg-white p-8 rounded-lg shadow-sm text-center">
+          <h3 className="text-lg font-medium text-gray-900 mb-2">
+            Select a Match
+          </h3>
+          <p className="text-gray-500">
+            Please select a match from above to view or manage player
+            statistics.
+          </p>
+        </div>
       )}
     </div>
   );

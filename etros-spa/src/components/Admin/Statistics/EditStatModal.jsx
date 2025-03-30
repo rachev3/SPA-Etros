@@ -1,26 +1,59 @@
 import React, { useState } from "react";
+import { useUpdatePlayerStats } from "../../../api/playerStatsApi";
 
-const EditStatModal = ({ stat, players, isOpen, onClose, onSave }) => {
-  const [formData, setFormData] = useState(stat);
+const EditStatModal = ({ stat, players, isOpen, onClose, onSuccess }) => {
+  const { update: updatePlayerStats } = useUpdatePlayerStats();
+
+  // Initialize form data with correct field names and defaults based on model
+  const [formData, setFormData] = useState({
+    playerId: stat.player?._id || "",
+    fieldGoalsMade: stat.fieldGoalsMade || 0,
+    fieldGoalsAttempted: stat.fieldGoalsAttempted || 0, // Fixed typo from fieldgoalsAttempted
+    twoPointsMade: stat.twoPointsMade || 0,
+    twoPointsAttempted: stat.twoPointsAttempted || 0,
+    threePointsMade: stat.threePointsMade || 0,
+    threePointsAttempted: stat.threePointsAttempted || 0,
+    freeThrowsMade: stat.freeThrowsMade || 0,
+    freeThrowsAttempted: stat.freeThrowsAttempted || 0,
+    offensiveRebounds: stat.offensiveRebounds || 0,
+    defensiveRebounds: stat.defensiveRebounds || 0,
+    totalAssists: stat.totalAssists || 0,
+    totalSteals: stat.totalSteals || 0,
+    totalBlocks: stat.totalBlocks || 0,
+    totalTurnovers: stat.totalTurnovers || 0,
+    totalFouls: stat.totalFouls || 0,
+    plusMinus: stat.plusMinus || 0,
+    // These fields are calculated on the server
+    efficiency: stat.efficiency || 0,
+    totalPoints: stat.totalPoints || 0,
+  });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
-      [name]:
-        name === "playerId" ? parseInt(value, 10) : parseInt(value, 10) || 0,
+      [name]: name === "playerId" ? value : parseInt(value) || 0,
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onSave(formData);
+    try {
+      // Remove calculated fields before sending to API
+      const { efficiency, totalPoints, ...statsToUpdate } = formData;
+      await updatePlayerStats(stat._id, statsToUpdate);
+      onSuccess();
+      onClose();
+    } catch (error) {
+      console.error("Error updating stat:", error);
+      alert("Failed to update statistic");
+    }
   };
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0  bg-gray-600/20 backdrop-blur-sm z-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
         <div className="p-6">
           <div className="flex justify-between items-center mb-6">
@@ -49,6 +82,7 @@ const EditStatModal = ({ stat, players, isOpen, onClose, onSave }) => {
           </div>
 
           <form onSubmit={handleSubmit}>
+            {/* Player Selection */}
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Player
@@ -62,12 +96,34 @@ const EditStatModal = ({ stat, players, isOpen, onClose, onSave }) => {
                 className="w-full p-3 border border-gray-300 rounded-lg bg-gray-100"
               >
                 <option value="">Select a player</option>
-                {players.map((player) => (
-                  <option key={player.id} value={player.id}>
-                    {player.name} (#{player.jerseyNumber}, {player.position})
+                {players?.map((player) => (
+                  <option key={player._id} value={player._id}>
+                    {player.name} (#{player.number})
                   </option>
                 ))}
               </select>
+            </div>
+
+            {/* Display calculated stats */}
+            <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Total Points
+                  </label>
+                  <div className="mt-1 text-lg font-semibold text-yellow-600">
+                    {formData.totalPoints}
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Efficiency Rating
+                  </label>
+                  <div className="mt-1 text-lg font-semibold text-yellow-600">
+                    {formData.efficiency}
+                  </div>
+                </div>
+              </div>
             </div>
 
             {/* Field Goals */}

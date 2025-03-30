@@ -1,26 +1,111 @@
 import React, { useState } from "react";
+import { useCreatePlayerStats } from "../../../api/playerStatsApi";
+import { usePlayers } from "../../../api/playerApi";
 
-const AddStatModal = ({ stat, players, isOpen, onClose, onSave }) => {
-  const [formData, setFormData] = useState(stat);
+const AddStatModal = ({ matchId, onClose, onSuccess }) => {
+  const { create: createPlayerStats } = useCreatePlayerStats();
+  const {
+    players,
+    loading: playersLoading,
+    error: playersError,
+  } = usePlayers();
+  const [formData, setFormData] = useState({
+    matchId,
+    playerId: "",
+    fieldGoalsMade: 0,
+    fieldGoalsAttempted: 0,
+    twoPointsMade: 0,
+    twoPointsAttempted: 0,
+    threePointsMade: 0,
+    threePointsAttempted: 0,
+    freeThrowsMade: 0,
+    freeThrowsAttempted: 0,
+    offensiveRebounds: 0,
+    defensiveRebounds: 0,
+    totalAssists: 0,
+    totalSteals: 0,
+    totalBlocks: 0,
+    totalTurnovers: 0,
+    totalFouls: 0,
+    plusMinus: 0,
+  });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
-      [name]:
-        name === "playerId" ? parseInt(value, 10) : parseInt(value, 10) || 0,
+      [name]: name === "playerId" ? value : parseInt(value, 10) || 0,
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onSave(formData);
+    if (!formData.playerId) {
+      alert("Please select a player");
+      return;
+    }
+
+    try {
+      await createPlayerStats({
+        ...formData,
+        playerId: formData.playerId,
+      });
+      onSuccess();
+      onClose();
+    } catch (error) {
+      console.error("Error saving stat:", error);
+      alert("Failed to save statistic");
+    }
   };
 
-  if (!isOpen) return null;
+  if (playersLoading) {
+    return (
+      <div className="fixed inset-0  bg-gray-600/20 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div className="bg-white rounded-lg p-6">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-500 mx-auto"></div>
+        </div>
+      </div>
+    );
+  }
+
+  if (playersError) {
+    return (
+      <div className="fixed inset-0  bg-gray-600/20 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div className="bg-white rounded-lg p-6">
+          <p className="text-red-600">
+            Failed to load players. Please try again later.
+          </p>
+          <button
+            onClick={onClose}
+            className="mt-4 px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!players || players.length === 0) {
+    return (
+      <div className="fixed inset-0 bg-gray-600/20 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div className="bg-white rounded-lg p-6">
+          <p className="text-gray-600">
+            No players available. Please add players first.
+          </p>
+          <button
+            onClick={onClose}
+            className="mt-4 px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 bg-gray-600/20 backdrop-blur-sm z-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
         <div className="p-6">
           <div className="flex justify-between items-center mb-6">
@@ -62,8 +147,8 @@ const AddStatModal = ({ stat, players, isOpen, onClose, onSave }) => {
               >
                 <option value="">Select a player</option>
                 {players.map((player) => (
-                  <option key={player.id} value={player.id}>
-                    {player.name} (#{player.jerseyNumber}, {player.position})
+                  <option key={player._id} value={player._id}>
+                    {player.name} (#{player.number})
                   </option>
                 ))}
               </select>

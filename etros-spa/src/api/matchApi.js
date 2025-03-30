@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import apiClient from "./axiosConfig/axios";
 import { API_ENDPOINTS } from "./axiosConfig/config";
 
-export const useMatches = (page = 1, limit) => {
+export const useMatches = (page = 1, limit, populateSettings = null) => {
   const [matches, setMatches] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -12,7 +12,7 @@ export const useMatches = (page = 1, limit) => {
     totalPages: 1,
     totalResults: 0,
   });
-
+  // http://localhost:5000/api/matches?populate=playerStats:player
   const fetchMatches = useCallback(async () => {
     try {
       setLoading(true);
@@ -22,6 +22,11 @@ export const useMatches = (page = 1, limit) => {
 
       if (page) params.append("page", page);
       if (limit) params.append("limit", limit);
+
+      // Handle population based on the provided settings
+      if (populateSettings) {
+        params.append("populate", populateSettings);
+      }
 
       if (params.toString()) {
         url += `?${params.toString()}`;
@@ -44,7 +49,7 @@ export const useMatches = (page = 1, limit) => {
     } finally {
       setLoading(false);
     }
-  }, [page, limit]);
+  }, [page, limit, populateSettings]);
 
   useEffect(() => {
     fetchMatches();

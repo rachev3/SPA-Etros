@@ -87,7 +87,7 @@ export const useCreatePlayerStats = () => {
   const create = async (playerStatsData) => {
     try {
       const response = await apiClient.post(
-        API_ENDPOINTS.players.create,
+        API_ENDPOINTS.playerStats.create,
         playerStatsData
       );
       return response.data.data;
