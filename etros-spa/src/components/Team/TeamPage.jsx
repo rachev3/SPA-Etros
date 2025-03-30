@@ -15,20 +15,6 @@ const TeamPage = () => {
       image: "https://placehold.co/300x400/111/333?text=Coach",
       bio: "Coach Peterson brings 15 years of coaching experience and has led teams to multiple championships.",
     },
-    {
-      id: 2,
-      name: "Sarah Reynolds",
-      role: "Assistant Coach",
-      image: "https://placehold.co/300x400/111/333?text=Coach",
-      bio: "Coach Reynolds specializes in player development and offensive strategy.",
-    },
-    {
-      id: 3,
-      name: "Mark Thompson",
-      role: "Athletic Trainer",
-      image: "https://placehold.co/300x400/111/333?text=Staff",
-      bio: "Mark ensures our players stay in peak physical condition throughout the season.",
-    },
   ];
 
   if (loading) {
@@ -66,7 +52,7 @@ const TeamPage = () => {
         </div>
       </section>
 
-      {/* Team Stats Section */}
+      {/* Team Stats Section
       <section className="py-16 px-4 bg-gradient-to-b from-white to-gray-50">
         <div className="max-w-7xl mx-auto">
           <h2 className="text-3xl font-bold mb-2 text-center">
@@ -121,7 +107,7 @@ const TeamPage = () => {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Players Section */}
       <section className="py-16 px-4">

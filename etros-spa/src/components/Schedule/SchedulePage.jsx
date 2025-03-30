@@ -1,156 +1,48 @@
 import React, { useState } from "react";
+import { useMatches } from "../../api/matchApi";
+import { formatLongDate } from "../../utils/dateUtils";
 
 const SchedulePage = () => {
   const [activeTab, setActiveTab] = useState("upcoming");
+  const [currentPage, setCurrentPage] = useState(1);
+  const matchesPerPage = 5;
 
-  // Mock data for upcoming games
-  const upcomingGames = [
-    {
-      id: 1,
-      opponent: "Phoenix Suns",
-      date: "2023-08-12",
-      time: "19:30",
-      location: "Etros Arena",
-      isHome: true,
-    },
-    {
-      id: 2,
-      opponent: "LA Lakers",
-      date: "2023-08-18",
-      time: "20:00",
-      location: "Staples Center",
-      isHome: false,
-    },
-    {
-      id: 3,
-      opponent: "Miami Heat",
-      date: "2023-08-25",
-      time: "19:00",
-      location: "Etros Arena",
-      isHome: true,
-    },
-    {
-      id: 4,
-      opponent: "Brooklyn Nets",
-      date: "2023-09-02",
-      time: "18:30",
-      location: "Barclays Center",
-      isHome: false,
-    },
-    {
-      id: 5,
-      opponent: "Chicago Bulls",
-      date: "2023-09-10",
-      time: "19:30",
-      location: "Etros Arena",
-      isHome: true,
-    },
-  ];
+  const { matches, loading, error, pagination } = useMatches(
+    currentPage,
+    matchesPerPage
+  );
 
-  // Mock data for past results
-  const pastResults = [
-    {
-      id: 1,
-      opponent: "Boston Celtics",
-      date: "2023-07-15",
-      result: "W 102-98",
-      location: "TD Garden",
-      isHome: false,
-    },
-    {
-      id: 2,
-      opponent: "Golden State Warriors",
-      date: "2023-07-08",
-      result: "L 95-105",
-      location: "Etros Arena",
-      isHome: true,
-    },
-    {
-      id: 3,
-      opponent: "Dallas Mavericks",
-      date: "2023-06-30",
-      result: "W 112-104",
-      location: "Etros Arena",
-      isHome: true,
-    },
-    {
-      id: 4,
-      opponent: "Toronto Raptors",
-      date: "2023-06-23",
-      result: "W 99-92",
-      location: "Scotiabank Arena",
-      isHome: false,
-    },
-    {
-      id: 5,
-      opponent: "Milwaukee Bucks",
-      date: "2023-06-16",
-      result: "L 88-97",
-      location: "Fiserv Forum",
-      isHome: false,
-    },
-  ];
+  // Filter matches based on the active tab
+  const filteredMatches = matches.filter((match) => {
+    const isUpcoming = new Date(match.date) > new Date();
+    return activeTab === "upcoming" ? isUpcoming : !isUpcoming;
+  });
 
-  // Mock data for full season schedule
-  const seasonSchedule = [
-    { month: "August 2023", games: upcomingGames },
-    {
-      month: "September 2023",
-      games: [
-        {
-          id: 6,
-          opponent: "Denver Nuggets",
-          date: "2023-09-18",
-          time: "19:00",
-          location: "Ball Arena",
-          isHome: false,
-        },
-        {
-          id: 7,
-          opponent: "Utah Jazz",
-          date: "2023-09-24",
-          time: "18:30",
-          location: "Etros Arena",
-          isHome: true,
-        },
-      ],
-    },
-    {
-      month: "October 2023",
-      games: [
-        {
-          id: 8,
-          opponent: "Memphis Grizzlies",
-          date: "2023-10-05",
-          time: "19:30",
-          location: "Etros Arena",
-          isHome: true,
-        },
-        {
-          id: 9,
-          opponent: "Philadelphia 76ers",
-          date: "2023-10-12",
-          time: "20:00",
-          location: "Wells Fargo Center",
-          isHome: false,
-        },
-        {
-          id: 10,
-          opponent: "New York Knicks",
-          date: "2023-10-19",
-          time: "19:00",
-          location: "Etros Arena",
-          isHome: true,
-        },
-      ],
-    },
-  ];
-
-  // Format date as Month Day, Year
-  const formatDate = (dateString) => {
-    const options = { year: "numeric", month: "long", day: "numeric" };
-    return new Date(dateString).toLocaleDateString(undefined, options);
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+    window.scrollTo(0, 0);
   };
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-yellow-400"></div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-red-600 mb-4">Error</h2>
+          <p className="text-gray-600">{error}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white">
@@ -192,48 +84,38 @@ const SchedulePage = () => {
             >
               Past Results
             </button>
-            <button
-              onClick={() => setActiveTab("season")}
-              className={`py-3 px-6 font-medium text-lg transition-colors duration-200 border-b-2 -mb-px ${
-                activeTab === "season"
-                  ? "border-yellow-500 text-black"
-                  : "border-transparent text-gray-500 hover:text-gray-700"
-              }`}
-            >
-              Full Season
-            </button>
           </div>
 
-          {/* Upcoming Games Tab Content */}
-          {activeTab === "upcoming" && (
-            <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-              <div className="p-6 bg-black">
-                <h2 className="text-2xl font-bold text-yellow-400">
-                  Upcoming Games
-                </h2>
-              </div>
-              <div>
-                {upcomingGames.map((game) => (
+          {/* Matches Content */}
+          <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+            <div className="p-6 bg-black">
+              <h2 className="text-2xl font-bold text-yellow-400">
+                {activeTab === "upcoming" ? "Upcoming Games" : "Past Results"}
+              </h2>
+            </div>
+            <div>
+              {filteredMatches.length > 0 ? (
+                filteredMatches.map((match) => (
                   <div
-                    key={game.id}
+                    key={match._id}
                     className="p-6 flex flex-col md:flex-row justify-between items-center border-b border-gray-200 hover:bg-gray-50 transition-colors duration-200"
                   >
                     <div className="flex flex-col md:flex-row items-center mb-4 md:mb-0">
                       <div className="text-center md:text-left md:mr-8 mb-4 md:mb-0">
                         <div className="text-sm text-gray-500">
-                          {formatDate(game.date)}
+                          {formatLongDate(match.date)}
                         </div>
-                        <div className="text-lg font-bold">{game.time}</div>
+                        <div className="text-lg font-bold">{match.time}</div>
                       </div>
                       <div className="text-center md:text-left">
                         <div className="text-xl font-bold mb-1">
-                          {game.isHome ? "Etros vs " : "Etros at "}{" "}
-                          {game.opponent}
+                          {match.isHome ? "Etros vs " : "Etros at "}{" "}
+                          {match.opponent}
                         </div>
                         <div className="text-gray-600">
-                          {game.location}{" "}
-                          {game.isHome && (
-                            <span className="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-0.5 rounded">
+                          {match.location}
+                          {match.isHome && (
+                            <span className="ml-2 bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-0.5 rounded">
                               HOME
                             </span>
                           )}
@@ -241,125 +123,74 @@ const SchedulePage = () => {
                       </div>
                     </div>
                     <div className="flex space-x-3">
-                      <button className="bg-black hover:bg-gray-900 text-white py-2 px-4 rounded transition-colors duration-200 text-sm">
-                        Buy Tickets
-                      </button>
-                      <button className="bg-yellow-500 hover:bg-yellow-400 text-black py-2 px-4 rounded transition-colors duration-200 text-sm">
-                        Game Details
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Past Results Tab Content */}
-          {activeTab === "past" && (
-            <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-              <div className="p-6 bg-black">
-                <h2 className="text-2xl font-bold text-yellow-400">
-                  Past Results
-                </h2>
-              </div>
-              <div>
-                {pastResults.map((game) => (
-                  <div
-                    key={game.id}
-                    className="p-6 flex flex-col md:flex-row justify-between items-center border-b border-gray-200 hover:bg-gray-50 transition-colors duration-200"
-                  >
-                    <div className="flex flex-col md:flex-row items-center mb-4 md:mb-0">
-                      <div className="text-center md:text-left md:mr-8 mb-4 md:mb-0">
-                        <div className="text-sm text-gray-500">
-                          {formatDate(game.date)}
-                        </div>
-                        <div
-                          className={`text-lg font-bold ${
-                            game.result.startsWith("W")
-                              ? "text-green-600"
-                              : "text-red-600"
-                          }`}
-                        >
-                          {game.result}
-                        </div>
-                      </div>
-                      <div className="text-center md:text-left">
-                        <div className="text-xl font-bold mb-1">
-                          {game.isHome ? "Etros vs " : "Etros at "}{" "}
-                          {game.opponent}
-                        </div>
-                        <div className="text-gray-600">
-                          {game.location}{" "}
-                          {game.isHome && (
-                            <span className="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-0.5 rounded">
-                              HOME
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                    <div>
-                      <button className="bg-black hover:bg-gray-900 text-white py-2 px-4 rounded transition-colors duration-200 text-sm">
-                        Game Recap
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Full Season Schedule Tab Content */}
-          {activeTab === "season" && (
-            <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-              <div className="p-6 bg-black">
-                <h2 className="text-2xl font-bold text-yellow-400">
-                  2023-2024 Season Schedule
-                </h2>
-              </div>
-              {seasonSchedule.map((monthData, index) => (
-                <div key={index}>
-                  <div className="p-4 bg-purple-900 text-white font-bold">
-                    {monthData.month}
-                  </div>
-                  {monthData.games.map((game) => (
-                    <div
-                      key={game.id}
-                      className="p-6 flex flex-col md:flex-row justify-between items-center border-b border-gray-200 hover:bg-gray-50 transition-colors duration-200"
-                    >
-                      <div className="flex flex-col md:flex-row items-center mb-4 md:mb-0">
-                        <div className="text-center md:text-left md:mr-8 mb-4 md:mb-0">
-                          <div className="text-sm text-gray-500">
-                            {formatDate(game.date)}
-                          </div>
-                          <div className="text-lg font-bold">{game.time}</div>
-                        </div>
-                        <div className="text-center md:text-left">
-                          <div className="text-xl font-bold mb-1">
-                            {game.isHome ? "Etros vs " : "Etros at "}{" "}
-                            {game.opponent}
-                          </div>
-                          <div className="text-gray-600">
-                            {game.location}{" "}
-                            {game.isHome && (
-                              <span className="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-0.5 rounded">
-                                HOME
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                      <div className="flex space-x-3">
+                      {activeTab === "upcoming" ? (
+                        <>
+                          <button className="bg-black hover:bg-gray-900 text-white py-2 px-4 rounded transition-colors duration-200 text-sm">
+                            Buy Tickets
+                          </button>
+                          <button className="bg-yellow-500 hover:bg-yellow-400 text-black py-2 px-4 rounded transition-colors duration-200 text-sm">
+                            Game Details
+                          </button>
+                        </>
+                      ) : (
                         <button className="bg-black hover:bg-gray-900 text-white py-2 px-4 rounded transition-colors duration-200 text-sm">
-                          {new Date(game.date) < new Date()
-                            ? "Game Recap"
-                            : "Buy Tickets"}
+                          Game Recap
                         </button>
-                      </div>
+                      )}
                     </div>
-                  ))}
+                  </div>
+                ))
+              ) : (
+                <div className="p-6 text-center text-gray-500">
+                  No {activeTab === "upcoming" ? "upcoming" : "past"} matches
+                  found.
                 </div>
-              ))}
+              )}
+            </div>
+          </div>
+
+          {/* Pagination Controls */}
+          {pagination.totalPages > 1 && (
+            <div className="mt-8 flex justify-center space-x-2">
+              <button
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className={`px-4 py-2 rounded-lg ${
+                  currentPage === 1
+                    ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                    : "bg-yellow-500 text-black hover:bg-yellow-600"
+                }`}
+              >
+                Previous
+              </button>
+
+              <div className="flex space-x-1">
+                {[...Array(pagination.totalPages)].map((_, index) => (
+                  <button
+                    key={index + 1}
+                    onClick={() => handlePageChange(index + 1)}
+                    className={`px-4 py-2 rounded-lg ${
+                      currentPage === index + 1
+                        ? "bg-yellow-500 text-black"
+                        : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                    }`}
+                  >
+                    {index + 1}
+                  </button>
+                ))}
+              </div>
+
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === pagination.totalPages}
+                className={`px-4 py-2 rounded-lg ${
+                  currentPage === pagination.totalPages
+                    ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                    : "bg-yellow-500 text-black hover:bg-yellow-600"
+                }`}
+              >
+                Next
+              </button>
             </div>
           )}
         </div>

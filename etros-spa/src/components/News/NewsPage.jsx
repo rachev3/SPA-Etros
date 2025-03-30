@@ -1,10 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router";
 import { useArticles } from "../../api/articleApi";
 import { formatLongDate } from "../../utils/dateUtils";
 
 const NewsPage = () => {
-  const { articles, loading, error } = useArticles();
+  const [currentPage, setCurrentPage] = useState(1);
+  const articlesPerPage = 6; // 3x3 grid
+
+  const { articles, loading, error, pagination } = useArticles(
+    currentPage,
+    articlesPerPage
+  );
 
   // Loading state
   if (loading) {
@@ -32,6 +38,11 @@ const NewsPage = () => {
       </div>
     );
   }
+
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+    window.scrollTo(0, 0); // Scroll to top when page changes
+  };
 
   return (
     <div className="bg-white">
@@ -86,6 +97,51 @@ const NewsPage = () => {
               </div>
             ))}
           </div>
+
+          {/* Pagination Controls */}
+          {pagination.totalPages > 1 && (
+            <div className="mt-8 flex justify-center space-x-2">
+              <button
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className={`px-4 py-2 rounded-lg ${
+                  currentPage === 1
+                    ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                    : "bg-yellow-500 text-black hover:bg-yellow-600"
+                }`}
+              >
+                Previous
+              </button>
+
+              <div className="flex space-x-1">
+                {[...Array(pagination.totalPages)].map((_, index) => (
+                  <button
+                    key={index + 1}
+                    onClick={() => handlePageChange(index + 1)}
+                    className={`px-4 py-2 rounded-lg ${
+                      currentPage === index + 1
+                        ? "bg-yellow-500 text-black"
+                        : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                    }`}
+                  >
+                    {index + 1}
+                  </button>
+                ))}
+              </div>
+
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === pagination.totalPages}
+                className={`px-4 py-2 rounded-lg ${
+                  currentPage === pagination.totalPages
+                    ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                    : "bg-yellow-500 text-black hover:bg-yellow-600"
+                }`}
+              >
+                Next
+              </button>
+            </div>
+          )}
         </div>
       </section>
     </div>

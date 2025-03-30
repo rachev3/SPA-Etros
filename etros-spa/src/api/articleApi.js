@@ -2,29 +2,64 @@ import { useState, useEffect, useCallback } from "react";
 import apiClient from "./axiosConfig/axios";
 import { API_ENDPOINTS } from "./axiosConfig/config";
 
-export const useArticles = () => {
+export const useArticles = (page = 1, limit) => {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [pagination, setPagination] = useState({
+    page: 1,
+    limit: 0,
+    totalPages: 1,
+    totalResults: 0,
+  });
 
   const fetchArticles = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await apiClient.get(API_ENDPOINTS.articles.getAll);
-      setArticles(response.data.data);
+      // Construct URL with pagination parameters
+      let url = API_ENDPOINTS.articles.getAll;
+      const params = new URLSearchParams();
+
+      if (page) params.append("page", page);
+      if (limit) params.append("limit", limit);
+
+      if (params.toString()) {
+        url += `?${params.toString()}`;
+      }
+
+      const response = await apiClient.get(url);
+
+      // Set articles from the response data
+      setArticles(response.data.data || []);
+
+      // Set pagination metadata
+      setPagination({
+        page: response.data.pagination.page,
+        limit: response.data.pagination.limit,
+        totalPages: response.data.pagination.totalPages,
+        totalResults: response.data.pagination.totalResults,
+      });
+
       setError(null);
     } catch (err) {
       setError(err.message || "Failed to fetch articles");
+      setArticles([]);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [page, limit]);
 
   useEffect(() => {
     fetchArticles();
   }, [fetchArticles]);
 
-  return { articles, loading, error, refetch: fetchArticles };
+  return {
+    articles,
+    loading,
+    error,
+    pagination,
+    refetch: fetchArticles,
+  };
 };
 
 export const useArticle = (articleId) => {

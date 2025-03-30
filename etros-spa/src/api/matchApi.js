@@ -2,29 +2,55 @@ import { useState, useEffect, useCallback } from "react";
 import apiClient from "./axiosConfig/axios";
 import { API_ENDPOINTS } from "./axiosConfig/config";
 
-export const useMatches = () => {
+export const useMatches = (page = 1, limit) => {
   const [matches, setMatches] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [pagination, setPagination] = useState({
+    page: 1,
+    limit: 0,
+    totalPages: 1,
+    totalResults: 0,
+  });
 
   const fetchMatches = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await apiClient.get(API_ENDPOINTS.matches.getAll);
-      setMatches(response.data.data);
+      // Construct URL with pagination parameters
+      let url = API_ENDPOINTS.matches.getAll;
+      const params = new URLSearchParams();
+
+      if (page) params.append("page", page);
+      if (limit) params.append("limit", limit);
+
+      if (params.toString()) {
+        url += `?${params.toString()}`;
+      }
+
+      const response = await apiClient.get(url);
+
+      setMatches(response.data.data || []);
+      setPagination({
+        page: response.data.pagination.page,
+        limit: response.data.pagination.limit,
+        totalPages: response.data.pagination.totalPages,
+        totalResults: response.data.pagination.totalResults,
+      });
+
       setError(null);
     } catch (err) {
       setError(err.message || "Failed to fetch matches");
+      setMatches([]);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [page, limit]);
 
   useEffect(() => {
     fetchMatches();
   }, [fetchMatches]);
 
-  return { matches, loading, error, refetch: fetchMatches };
+  return { matches, loading, error, pagination, refetch: fetchMatches };
 };
 
 export const useMatch = (matchId) => {
