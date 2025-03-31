@@ -1,11 +1,7 @@
 import React, { useState } from "react";
 import PlayerStatsList from "./PlayerStatsList";
-import { useDeletePlayerStats } from "../../../api/playerStatsApi";
 import { useMatches } from "../../../api/matchApi";
-import { usePlayerStatsByMatchId } from "../../../api/playerStatsApi";
 import AddStatModal from "./AddStatModal";
-import EditStatModal from "./EditStatModal";
-import { usePlayers } from "../../../api/playerApi";
 
 const PlayerStatisticsManagement = () => {
   const [selectedMatchId, setSelectedMatchId] = useState(null);

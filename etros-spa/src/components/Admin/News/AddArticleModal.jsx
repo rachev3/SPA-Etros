@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useActionState, useOptimistic } from "react";
 import { useCreateArticle } from "../../../api/articleApi";
 
 const AddArticleModal = ({ onClose, onSuccess }) => {
@@ -13,16 +14,38 @@ const AddArticleModal = ({ onClose, onSuccess }) => {
     images: [],
   });
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      await create(article);
-      onSuccess();
-      onClose();
-    } catch (err) {
-      console.error("Failed to create article:", err);
+  // Use useActionState to handle the form submission
+  const [error, submitAction, isPending] = useActionState(
+    async (_, formData) => {
+      try {
+        const articleData = {
+          title: formData.get("title"),
+          content: formData.get("content"),
+          author: formData.get("author") || "Admin",
+          metaTitle: formData.get("metaTitle"),
+          metaDescription: formData.get("metaDescription"),
+          metaKeywords:
+            formData
+              .get("metaKeywords")
+              ?.split(",")
+              .map((k) => k.trim()) || [],
+          images:
+            formData
+              .get("images")
+              ?.split("\n")
+              .filter((url) => url.trim()) || [],
+        };
+
+        await create(articleData);
+        onSuccess();
+        onClose();
+        return null; // No error
+      } catch (err) {
+        console.error("Failed to create article:", err);
+        return err.message || "Failed to create article"; // Return error message
+      }
     }
-  };
+  );
 
   return (
     <div className="fixed inset-0 bg-gray-600/20 backdrop-blur-sm flex items-center justify-center z-50">
@@ -47,18 +70,22 @@ const AddArticleModal = ({ onClose, onSuccess }) => {
           </button>
         </div>
         <div className="p-4">
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form action={submitAction} className="space-y-4">
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-2 rounded-lg">
+                {error}
+              </div>
+            )}
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Title *
               </label>
               <input
                 type="text"
+                name="title"
                 className="w-full border border-gray-300 rounded-lg px-3 py-2"
-                value={article.title}
-                onChange={(e) =>
-                  setArticle({ ...article, title: e.target.value })
-                }
+                defaultValue={article.title}
                 required
               />
             </div>
@@ -68,12 +95,10 @@ const AddArticleModal = ({ onClose, onSuccess }) => {
                 Content *
               </label>
               <textarea
+                name="content"
                 className="w-full border border-gray-300 rounded-lg px-3 py-2"
                 rows="10"
-                value={article.content}
-                onChange={(e) =>
-                  setArticle({ ...article, content: e.target.value })
-                }
+                defaultValue={article.content}
                 required
               ></textarea>
             </div>
@@ -84,11 +109,9 @@ const AddArticleModal = ({ onClose, onSuccess }) => {
               </label>
               <input
                 type="text"
+                name="metaTitle"
                 className="w-full border border-gray-300 rounded-lg px-3 py-2"
-                value={article.metaTitle}
-                onChange={(e) =>
-                  setArticle({ ...article, metaTitle: e.target.value })
-                }
+                defaultValue={article.metaTitle}
               />
             </div>
 
@@ -97,13 +120,24 @@ const AddArticleModal = ({ onClose, onSuccess }) => {
                 Meta Description
               </label>
               <textarea
+                name="metaDescription"
                 className="w-full border border-gray-300 rounded-lg px-3 py-2"
                 rows="3"
-                value={article.metaDescription}
-                onChange={(e) =>
-                  setArticle({ ...article, metaDescription: e.target.value })
-                }
+                defaultValue={article.metaDescription}
               ></textarea>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Meta Keywords (comma-separated)
+              </label>
+              <input
+                type="text"
+                name="metaKeywords"
+                className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                defaultValue={article.metaKeywords.join(", ")}
+                placeholder="news, article, basketball"
+              />
             </div>
 
             <div>
@@ -111,17 +145,10 @@ const AddArticleModal = ({ onClose, onSuccess }) => {
                 Image URLs (one per line)
               </label>
               <textarea
+                name="images"
                 className="w-full border border-gray-300 rounded-lg px-3 py-2"
                 rows="3"
-                value={article.images.join("\n")}
-                onChange={(e) =>
-                  setArticle({
-                    ...article,
-                    images: e.target.value
-                      .split("\n")
-                      .filter((url) => url.trim()),
-                  })
-                }
+                defaultValue={article.images.join("\n")}
                 placeholder="https://example.com/image1.jpg&#10;https://example.com/image2.jpg"
               ></textarea>
             </div>
@@ -136,9 +163,14 @@ const AddArticleModal = ({ onClose, onSuccess }) => {
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 bg-yellow-500 text-black rounded-lg text-sm"
+                disabled={isPending}
+                className={`px-4 py-2 bg-yellow-500 text-black rounded-lg text-sm ${
+                  isPending
+                    ? "opacity-50 cursor-not-allowed"
+                    : "hover:bg-yellow-600"
+                } transition-colors`}
               >
-                Save Article
+                {isPending ? "Saving..." : "Save Article"}
               </button>
             </div>
           </form>
