@@ -1,11 +1,50 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PlayerStatsListItem from "./PlayerStatsListItem";
+import { usePlayerStatsByMatchId } from "../../../api/playerStatsApi";
 import AddStatModal from "./AddStatModal";
 import EditStatModal from "./EditStatModal";
-import { useMatches } from "../../../api/matchApi";
-import { usePlayers } from "../../../api/playerApi";
+import { useDeletePlayerStats } from "../../../api/playerStatsApi";
 
-const PlayerStatsList = ({ stats, onEdit, onDelete }) => {
+const PlayerStatsList = ({ matchId }) => {
+  const {
+    playerStats: stats,
+    loading: statsLoading,
+    error: statsError,
+    refetch: refetchStats,
+  } = usePlayerStatsByMatchId(matchId);
+
+  const [editModalData, setEditModalData] = useState(null);
+  const { deletePlayerStats } = useDeletePlayerStats();
+
+  useEffect(() => {
+    refetchStats();
+  }, [matchId, refetchStats]);
+
+  const handleDelete = async (statId) => {
+    try {
+      await deletePlayerStats(statId);
+      refetchStats();
+    } catch (error) {
+      console.error("Error deleting stat:", error);
+    }
+  };
+
+  if (statsLoading) {
+    return (
+      <div className="text-center py-4">
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-yellow-400 mx-auto"></div>
+      </div>
+    );
+  }
+
+  if (statsError) {
+    return (
+      <div className="text-center py-4 text-red-600">
+        Error loading stats: {statsError}
+      </div>
+    );
+  }
+
   return (
     <div className="bg-white p-4 rounded-lg shadow-sm">
       {/* <div className="flex justify-between items-center mb-4">
@@ -51,9 +90,10 @@ const PlayerStatsList = ({ stats, onEdit, onDelete }) => {
             <tbody className="bg-white divide-y divide-gray-200">
               {stats.map((stat) => (
                 <PlayerStatsListItem
+                  key={stat._id}
                   stat={stat}
-                  onEdit={onEdit}
-                  onDelete={onDelete}
+                  onEdit={() => setEditModalData(stat)}
+                  onDelete={() => handleDelete(stat._id)}
                 />
               ))}
             </tbody>
@@ -101,6 +141,18 @@ const PlayerStatsList = ({ stats, onEdit, onDelete }) => {
             </button>
           </div> */}
         </div>
+      )}
+
+      {editModalData && (
+        <EditStatModal
+          stat={editModalData}
+          isOpen={!!editModalData}
+          onClose={() => setEditModalData(null)}
+          onSuccess={() => {
+            setEditModalData(null);
+            refetchStats();
+          }}
+        />
       )}
     </div>
   );

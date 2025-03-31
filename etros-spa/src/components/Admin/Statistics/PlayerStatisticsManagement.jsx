@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import MatchSelector from "./MatchSelector";
 import PlayerStatsList from "./PlayerStatsList";
 import { useDeletePlayerStats } from "../../../api/playerStatsApi";
 import { useMatches } from "../../../api/matchApi";
@@ -15,37 +14,14 @@ const PlayerStatisticsManagement = () => {
     loading: matchesLoading,
     error: matchesError,
   } = useMatches();
-
-  // Only fetch player stats when we have a valid matchId
-  const {
-    playerStats,
-    loading: statsLoading,
-    error: statsError,
-    refetch: refetchStats,
-  } = usePlayerStatsByMatchId(selectedMatchId || "no-request");
-
-  // State for modals
   const [showAddModal, setShowAddModal] = useState(false);
-  const [editModalData, setEditModalData] = useState(null);
 
-  // Get players for the modals
-  const { players } = usePlayers();
-
-  // Delete functionality
-  const { deletePlayerStats } = useDeletePlayerStats();
-
-  const handleDelete = async (statId) => {
-    try {
-      await deletePlayerStats(statId);
-      refetchStats();
-    } catch (error) {
-      console.error("Error deleting stat:", error);
-    }
+  const handleMatchSelect = (matchId) => {
+    setSelectedMatchId(matchId);
   };
 
-  // Handle match selection
-  const handleMatchSelect = (match) => {
-    setSelectedMatchId(match._id);
+  const handleStatAdded = async () => {
+    setShowAddModal(false);
   };
 
   return (
@@ -53,17 +29,36 @@ const PlayerStatisticsManagement = () => {
       <h1 className="text-2xl font-bold text-gray-800">
         Player Statistics Management
       </h1>
-
+      {/* Match Selector Section (merged in here) */}
       {matchesLoading && <div>Loading matches...</div>}
       {matchesError && <div>Error loading matches: {matchesError}</div>}
       {matches && (
-        <MatchSelector
-          matches={matches}
-          onMatchSelect={handleMatchSelect}
-          selectedMatchId={selectedMatchId}
-        />
+        <div className="bg-white p-4 rounded-lg shadow-sm">
+          <h2 className="text-lg font-medium mb-4">Select Match</h2>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {matches.map((match) => (
+              <div
+                key={match._id}
+                onClick={() => handleMatchSelect(match._id)}
+                className={`border p-4 rounded-lg cursor-pointer transition-colors ${
+                  selectedMatchId === match._id
+                    ? "border-yellow-500 bg-yellow-50"
+                    : "border-gray-200 hover:border-yellow-300 hover:bg-yellow-50/50"
+                }`}
+              >
+                <p className="font-medium text-gray-800">{match.opponent}</p>
+                <p className="text-sm text-gray-500">
+                  {new Date(match.date).toLocaleDateString()} • {match.location}
+                </p>
+                <p className="text-xs text-gray-400 mt-1">
+                  {match.playerStats?.length || 0} player statistics recorded
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
       )}
-
+      {/* Player Stats Section */}
       {selectedMatchId && (
         <div>
           <div className="flex justify-between items-center mb-4">
@@ -75,16 +70,10 @@ const PlayerStatisticsManagement = () => {
               Add Player Stats
             </button>
           </div>
-
-          {statsLoading && <div>Loading player stats...</div>}
-          {statsError && <div>Error loading player stats: {statsError}</div>}
-          {playerStats && (
-            <PlayerStatsList
-              stats={playerStats}
-              onEdit={(stat) => setEditModalData(stat)}
-              onDelete={handleDelete}
-            />
-          )}
+          <PlayerStatsList
+            matchId={selectedMatchId}
+            key={selectedMatchId} // Add key to force re-render when match changes
+          />
         </div>
       )}
 
@@ -92,23 +81,7 @@ const PlayerStatisticsManagement = () => {
         <AddStatModal
           matchId={selectedMatchId}
           onClose={() => setShowAddModal(false)}
-          onSuccess={() => {
-            setShowAddModal(false);
-            refetchStats();
-          }}
-        />
-      )}
-
-      {editModalData && (
-        <EditStatModal
-          stat={editModalData}
-          players={players}
-          isOpen={!!editModalData}
-          onClose={() => setEditModalData(null)}
-          onSuccess={() => {
-            setEditModalData(null);
-            refetchStats();
-          }}
+          onSuccess={handleStatAdded}
         />
       )}
     </div>

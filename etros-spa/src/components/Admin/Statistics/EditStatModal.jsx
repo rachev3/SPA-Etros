@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { useUpdatePlayerStats } from "../../../api/playerStatsApi";
+import { usePlayers } from "../../../api/playerApi";
 
-const EditStatModal = ({ stat, players, isOpen, onClose, onSuccess }) => {
+const EditStatModal = ({ stat, isOpen, onClose, onSuccess }) => {
   const { update: updatePlayerStats } = useUpdatePlayerStats();
+  const { players } = usePlayers();
 
   // Initialize form data with correct field names and defaults based on model
   const [formData, setFormData] = useState({
@@ -23,7 +25,6 @@ const EditStatModal = ({ stat, players, isOpen, onClose, onSuccess }) => {
     turnovers: stat.turnovers || 0,
     fouls: stat.fouls || 0,
     plusMinus: stat.plusMinus || 0,
-    // These fields are calculated on the server
     efficiency: stat.efficiency || 0,
     points: stat.points || 0,
   });
@@ -40,9 +41,8 @@ const EditStatModal = ({ stat, players, isOpen, onClose, onSuccess }) => {
     e.preventDefault();
     try {
       // Remove calculated fields before sending to API
-      const { efficiency, points, ...statsToUpdate } = formData;
-      await updatePlayerStats(stat._id, statsToUpdate);
-      onSuccess();
+      await updatePlayerStats(stat._id, formData);
+      onSuccess(stat.matchId);
       onClose();
     } catch (error) {
       console.error("Error updating stat:", error);
@@ -103,29 +103,6 @@ const EditStatModal = ({ stat, players, isOpen, onClose, onSuccess }) => {
                 ))}
               </select>
             </div>
-
-            {/* Display calculated stats */}
-            <div className="mb-6 p-4 bg-gray-50 rounded-lg">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Total Points
-                  </label>
-                  <div className="mt-1 text-lg font-semibold text-yellow-600">
-                    {formData.points}
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Efficiency Rating
-                  </label>
-                  <div className="mt-1 text-lg font-semibold text-yellow-600">
-                    {formData.efficiency}
-                  </div>
-                </div>
-              </div>
-            </div>
-
             {/* Field Goals */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
               <div>
@@ -355,6 +332,30 @@ const EditStatModal = ({ stat, players, isOpen, onClose, onSuccess }) => {
                   type="number"
                   name="plusMinus"
                   value={formData.plusMinus}
+                  onChange={handleChange}
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Points
+                </label>
+                <input
+                  type="number"
+                  name="points"
+                  value={formData.points}
+                  onChange={handleChange}
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Efficiency
+                </label>
+                <input
+                  type="number"
+                  name="efficiency"
+                  value={formData.efficiency}
                   onChange={handleChange}
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
                 />

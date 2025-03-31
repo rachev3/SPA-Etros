@@ -4,11 +4,7 @@ import { usePlayers } from "../../../api/playerApi";
 
 const AddStatModal = ({ matchId, onClose, onSuccess }) => {
   const { create: createPlayerStats } = useCreatePlayerStats();
-  const {
-    players,
-    loading: playersLoading,
-    error: playersError,
-  } = usePlayers();
+  const { players } = usePlayers();
   const [formData, setFormData] = useState({
     matchId,
     playerId: "",
@@ -27,6 +23,8 @@ const AddStatModal = ({ matchId, onClose, onSuccess }) => {
     blocks: 0,
     turnovers: 0,
     fouls: 0,
+    efficiency: 0,
+    points: 0,
     plusMinus: 0,
   });
 
@@ -40,6 +38,7 @@ const AddStatModal = ({ matchId, onClose, onSuccess }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log(formData);
     if (!formData.playerId) {
       alert("Please select a player");
       return;
@@ -47,7 +46,7 @@ const AddStatModal = ({ matchId, onClose, onSuccess }) => {
 
     try {
       await createPlayerStats(formData);
-      await onSuccess(); // Ensure we wait for the success callback
+      onSuccess();
       onClose();
     } catch (error) {
       console.error("Error saving stat:", error);
@@ -334,6 +333,30 @@ const AddStatModal = ({ matchId, onClose, onSuccess }) => {
                   type="number"
                   name="plusMinus"
                   value={formData.plusMinus}
+                  onChange={handleChange}
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Efficiency
+                </label>
+                <input
+                  type="number"
+                  name="efficiency"
+                  value={formData.efficiency}
+                  onChange={handleChange}
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Points
+                </label>
+                <input
+                  type="number"
+                  name="points"
+                  value={formData.points}
                   onChange={handleChange}
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
                 />
