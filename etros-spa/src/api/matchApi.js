@@ -2,7 +2,12 @@ import { useState, useEffect, useCallback } from "react";
 import apiClient from "./axiosConfig/axios";
 import { API_ENDPOINTS } from "./axiosConfig/config";
 
-export const useMatches = (page = 1, limit, populateSettings = null) => {
+export const useMatches = (
+  page = 1,
+  limit,
+  filters,
+  populateSettings = null
+) => {
   const [matches, setMatches] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -20,8 +25,28 @@ export const useMatches = (page = 1, limit, populateSettings = null) => {
       let url = API_ENDPOINTS.matches.getAll;
       const params = new URLSearchParams();
 
+      // Add pagination params
       if (page) params.append("page", page);
       if (limit) params.append("limit", limit);
+
+      // Add filter params only if filters exist and are not empty
+      if (
+        filters &&
+        typeof filters === "object" &&
+        Object.keys(filters).length > 0
+      ) {
+        Object.entries(filters).forEach(([key, value]) => {
+          if (typeof value === "object") {
+            // Handle operators like [gt], [lt], [in], etc.
+            Object.entries(value).forEach(([operator, operatorValue]) => {
+              params.append(`${key}[${operator}]`, operatorValue);
+            });
+          } else {
+            // Handle direct equality filters
+            params.append(key, value);
+          }
+        });
+      }
 
       // Handle population based on the provided settings
       if (populateSettings) {
@@ -49,7 +74,7 @@ export const useMatches = (page = 1, limit, populateSettings = null) => {
     } finally {
       setLoading(false);
     }
-  }, [page, limit, populateSettings]);
+  }, [page, limit, filters, populateSettings]);
 
   useEffect(() => {
     fetchMatches();
