@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useArticles, useDeleteArticle } from "../../../api/articleApi";
-import { formatLongDate } from "../../../utils/dateUtils";
 import AddArticleModal from "./AddArticleModal";
 import EditArticleModal from "./EditArticleModal";
 import NewsListItem from "./NewsListItem";
