@@ -4,7 +4,7 @@ const PaginationControls = ({ currentPage, totalPages, onChange }) => {
   if (totalPages <= 1) return null;
 
   return (
-    <div className="mt-8 flex justify-center space-x-2">
+    <div className="mt-8 mb-8 flex justify-center space-x-2">
       <button
         onClick={() => onChange(currentPage - 1)}
         disabled={currentPage === 1}

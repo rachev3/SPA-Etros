@@ -5,7 +5,7 @@ import AddStatModal from "./AddStatModal";
 import EditStatModal from "./EditStatModal";
 import { useDeletePlayerStats } from "../../../api/playerStatsApi";
 
-const PlayerStatsList = ({ matchId }) => {
+const PlayerStatsList = ({ matchId, refreshTrigger }) => {
   const {
     playerStats: stats,
     loading: statsLoading,
@@ -13,12 +13,12 @@ const PlayerStatsList = ({ matchId }) => {
     refetch: refetchStats,
   } = usePlayerStatsByMatchId(matchId);
 
-  const [editModalData, setEditModalData] = useState(null);
-  const { deletePlayerStats } = useDeletePlayerStats();
-
   useEffect(() => {
     refetchStats();
-  }, [matchId, refetchStats]);
+  }, [matchId, refreshTrigger, refetchStats]);
+
+  const [editModalData, setEditModalData] = useState(null);
+  const { deletePlayerStats } = useDeletePlayerStats();
 
   const handleDelete = async (statId) => {
     try {

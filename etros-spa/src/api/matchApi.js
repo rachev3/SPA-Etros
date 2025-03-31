@@ -83,7 +83,7 @@ export const useMatches = (
   return { matches, loading, error, pagination, refetch: fetchMatches };
 };
 
-export const useMatch = (matchId) => {
+export const useMatch = (matchId, populateSettings = "playerStats:player") => {
   const [match, setMatch] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -92,7 +92,13 @@ export const useMatch = (matchId) => {
     const fetchMatch = async () => {
       try {
         setLoading(true);
-        const url = API_ENDPOINTS.matches.getById.replace(":id", matchId);
+        let url = API_ENDPOINTS.matches.getById.replace(":id", matchId);
+
+        // Add population parameters if provided
+        if (populateSettings) {
+          url += `?populate=${populateSettings}`;
+        }
+
         const response = await apiClient.get(url);
         setMatch(response.data.data);
       } catch (err) {
@@ -103,7 +109,7 @@ export const useMatch = (matchId) => {
     };
 
     fetchMatch();
-  }, [matchId]);
+  }, [matchId, populateSettings]);
 
   return { match, loading, error };
 };

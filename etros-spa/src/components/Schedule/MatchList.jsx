@@ -1,4 +1,4 @@
-import React from "react";
+import { Link } from "react-router";
 import { formatLongDate } from "../../utils/dateUtils";
 
 const MatchList = ({ matches, activeTab }) => {
@@ -39,20 +39,12 @@ const MatchList = ({ matches, activeTab }) => {
             </div>
           </div>
           <div className="flex space-x-3">
-            {activeTab === "upcoming" ? (
-              <>
-                <button className="bg-black hover:bg-gray-900 text-white py-2 px-4 rounded transition-colors duration-200 text-sm">
-                  Buy Tickets
-                </button>
-                <button className="bg-yellow-500 hover:bg-yellow-400 text-black py-2 px-4 rounded transition-colors duration-200 text-sm">
-                  Game Details
-                </button>
-              </>
-            ) : (
-              <button className="bg-black hover:bg-gray-900 text-white py-2 px-4 rounded transition-colors duration-200 text-sm">
-                Game Recap
-              </button>
-            )}
+            <Link
+              to={`/match/${match._id}`}
+              className="bg-yellow-500 hover:bg-yellow-400 text-black py-2 px-4 rounded transition-colors duration-200 text-sm"
+            >
+              Game Details
+            </Link>
           </div>
         </div>
       ))}

@@ -15,6 +15,7 @@ const PlayerStatisticsManagement = () => {
     error: matchesError,
   } = useMatches();
   const [showAddModal, setShowAddModal] = useState(false);
+  const [statsRefreshTrigger, setStatsRefreshTrigger] = useState(0);
 
   const handleMatchSelect = (matchId) => {
     setSelectedMatchId(matchId);
@@ -22,6 +23,7 @@ const PlayerStatisticsManagement = () => {
 
   const handleStatAdded = async () => {
     setShowAddModal(false);
+    setStatsRefreshTrigger((prev) => prev + 1);
   };
 
   return (
@@ -50,9 +52,6 @@ const PlayerStatisticsManagement = () => {
                 <p className="text-sm text-gray-500">
                   {new Date(match.date).toLocaleDateString()} • {match.location}
                 </p>
-                <p className="text-xs text-gray-400 mt-1">
-                  {match.playerStats?.length || 0} player statistics recorded
-                </p>
               </div>
             ))}
           </div>
@@ -72,7 +71,8 @@ const PlayerStatisticsManagement = () => {
           </div>
           <PlayerStatsList
             matchId={selectedMatchId}
-            key={selectedMatchId} // Add key to force re-render when match changes
+            refreshTrigger={statsRefreshTrigger}
+            key={selectedMatchId} // key to force re-render when match changes
           />
         </div>
       )}

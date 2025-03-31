@@ -16,9 +16,9 @@ import PlayersManagement from "./components/Admin/Players/PlayersManagement";
 import PlayerStatisticsManagement from "./components/Admin/Statistics/PlayerStatisticsManagement";
 import { UserProvider } from "./context/UserContext";
 import { BrowserRouter as Router, Routes, Route } from "react-router";
-import ProtectedRoute from "./components/Auth/ProtectedRoute";
 import AdminRoute from "./components/Auth/AdminRoute";
 import PublicRoute from "./components/Auth/PublicRoute";
+import MatchDetails from "./components/Match/MatchDetails";
 
 function App() {
   return (
@@ -50,6 +50,7 @@ function App() {
             <Route path="/team" element={<TeamPage />} />
             <Route path="/team/player/:id" element={<PlayerDetailsPage />} />
             <Route path="/schedule" element={<SchedulePage />} />
+            <Route path="/match/:id" element={<MatchDetails />} />
             <Route path="/news" element={<NewsPage />} />
             <Route path="/news/article/:id" element={<ArticlePage />} />
             <Route path="/about" element={<AboutPage />} />
