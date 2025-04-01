@@ -11,7 +11,7 @@ const CommentsSection = ({
   currentUser,
 }) => {
   const commentsList = Array.isArray(comments) ? comments : [];
-  console.log(commentsList);
+  const isLoggedIn = !!currentUser;
 
   return (
     <div className="mt-12">
@@ -52,7 +52,19 @@ const CommentsSection = ({
         )}
       </div>
 
-      <CommentForm articleId={articleId} onCommentAdded={refetchComments} />
+      {isLoggedIn ? (
+        <CommentForm articleId={articleId} onCommentAdded={refetchComments} />
+      ) : (
+        <div className="mt-8 p-4 bg-gray-50 border border-gray-200 rounded-lg text-center">
+          <p className="text-gray-700 mb-2">Want to join the conversation?</p>
+          <p className="text-gray-600">
+            <a href="/login" className="text-yellow-600 hover:underline">
+              Sign in
+            </a>{" "}
+            to post a comment.
+          </p>
+        </div>
+      )}
     </div>
   );
 };

@@ -6,7 +6,14 @@ import CommentForm from "./CommentForm";
 const Comment = ({ comment, onDelete, onEdit, currentUser }) => {
   const [isEditing, setIsEditing] = useState(false);
   const { deleteComment } = useDeleteComment();
-  const isOwner = currentUser._id && comment.author._id === currentUser._id;
+
+  // Check if the user is logged in and owns the comment
+  const isOwner =
+    currentUser &&
+    currentUser._id &&
+    comment.author &&
+    comment.author._id &&
+    comment.author._id === currentUser._id;
 
   const handleDelete = async () => {
     if (window.confirm("Are you sure you want to delete this comment?")) {
