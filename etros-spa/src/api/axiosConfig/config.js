@@ -36,4 +36,12 @@ export const API_ENDPOINTS = {
     update: "/player-stats/:id",
     delete: "/player-stats/:id",
   },
+  comments: {
+    getAll: "/comments",
+    getByArticleId: "/comments/article/:id",
+    getByUserId: "/comments/user/:id",
+    create: "/comments",
+    update: "/comments/:id",
+    delete: "/comments/:id",
+  },
 };

@@ -38,7 +38,6 @@ const AddStatModal = ({ matchId, onClose, onSuccess }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
     if (!formData.playerId) {
       alert("Please select a player");
       return;

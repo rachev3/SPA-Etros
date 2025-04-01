@@ -7,7 +7,7 @@ import AboutPage from "./components/About/AboutPage";
 import LoginPage from "./components/Auth/LoginPage";
 import RegisterPage from "./components/Auth/RegisterPage";
 import PlayerDetailsPage from "./components/Team/PlayerDetailsPage";
-import ArticlePage from "./components/News/ArticlePage";
+import ArticlePage from "./components/News/Article/ArticlePage";
 import AdminLayout from "./layout/AdminLayout";
 import MainLayout from "./layout/MainLayout";
 import NewsManagement from "./components/Admin/News/NewsManagement";
