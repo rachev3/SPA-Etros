@@ -29,13 +29,13 @@ const PlayerCard = ({ player }) => {
               <div>
                 <p className="text-gray-500 text-xs uppercase">Height</p>
                 <p className="font-bold text-gray-900">
-                  {player.height || "N/A"}
+                  {player.height ? `${player.height} cm` : "N/A"}
                 </p>
               </div>
               <div>
                 <p className="text-gray-500 text-xs uppercase">Weight</p>
                 <p className="font-bold text-gray-900">
-                  {player.weight ? `${player.weight} lbs` : "N/A"}
+                  {player.weight ? `${player.weight} kg` : "N/A"}
                 </p>
               </div>
             </div>

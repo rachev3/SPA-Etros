@@ -27,27 +27,40 @@ export const usePlayers = () => {
   return { players, loading, error, refetch: fetchPlayers };
 };
 
-export const usePlayer = (playerId) => {
+export const usePlayer = (playerId, populateSettings) => {
   const [player, setPlayer] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchPlayer = async () => {
+      if (!playerId) {
+        setPlayer(null);
+        setLoading(false);
+        return;
+      }
+
       try {
         setLoading(true);
-        const url = API_ENDPOINTS.players.getById.replace(":id", playerId);
+        let url = API_ENDPOINTS.players.getById.replace(":id", playerId);
+
+        if (populateSettings) {
+          url += `?populate=${populateSettings}`;
+        }
+
         const response = await apiClient.get(url);
         setPlayer(response.data.data);
+        setError(null);
       } catch (err) {
         setError(err.message || "Failed to fetch player");
+        setPlayer(null);
       } finally {
         setLoading(false);
       }
     };
 
     fetchPlayer();
-  }, [playerId]);
+  }, [playerId, populateSettings]);
 
   return { player, loading, error };
 };
@@ -71,12 +84,17 @@ export const useCreatePlayer = () => {
 
 export const useUpdatePlayer = () => {
   const update = async (playerId, playerData) => {
-    const url = API_ENDPOINTS.players.update.replace(":id", playerId);
-    const response = await apiClient.put(url, {
-      ...playerData,
-      _id: playerId,
-    });
-    return response.data;
+    try {
+      const url = API_ENDPOINTS.players.update.replace(":id", playerId);
+      const response = await apiClient.put(url, {
+        ...playerData,
+        _id: playerId,
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error in updatePlayer:", error);
+      throw error;
+    }
   };
 
   return { update };
@@ -84,9 +102,14 @@ export const useUpdatePlayer = () => {
 
 export const useDeletePlayer = () => {
   const deletePlayer = async (playerId) => {
-    const url = API_ENDPOINTS.players.delete.replace(":id", playerId);
-    const response = await apiClient.delete(url);
-    return response.data;
+    try {
+      const url = API_ENDPOINTS.players.delete.replace(":id", playerId);
+      const response = await apiClient.delete(url);
+      return response.data;
+    } catch (error) {
+      console.error("Error in deletePlayer:", error);
+      throw error;
+    }
   };
 
   return { deletePlayer };

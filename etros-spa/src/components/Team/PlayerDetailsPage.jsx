@@ -4,8 +4,8 @@ import { usePlayer } from "../../api/playerApi";
 
 const PlayerDetailsPage = () => {
   const { id } = useParams();
-  const { player, loading, error } = usePlayer(id);
-  const [activeTab, setActiveTab] = useState("bio");
+  const { player, loading, error } = usePlayer(id, "statsHistory");
+  const [activeTab, setActiveTab] = useState("stats");
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
@@ -145,13 +145,13 @@ const PlayerDetailsPage = () => {
                     <tr className="border-b border-gray-200">
                       <th className="py-3 text-gray-500 font-medium">Height</th>
                       <td className="py-3 font-semibold text-gray-800">
-                        {player.height || "N/A"}
+                        {player.height ? `${player.height} cm` : "N/A"}
                       </td>
                     </tr>
                     <tr className="border-b border-gray-200">
                       <th className="py-3 text-gray-500 font-medium">Weight</th>
                       <td className="py-3 font-semibold text-gray-800">
-                        {player.weight ? `${player.weight} lbs` : "N/A"}
+                        {player.weight ? `${player.weight} kg` : "N/A"}
                       </td>
                     </tr>
                     <tr className="border-b border-gray-200">
@@ -164,10 +164,6 @@ const PlayerDetailsPage = () => {
                       <th className="py-3 text-gray-500 font-medium">Born</th>
                       <td className="py-3 font-semibold text-gray-800">
                         {player.bornYear}
-                        <br />
-                        <span className="text-sm font-normal text-gray-500">
-                          {player.birthplace || "Information not available"}
-                        </span>
                       </td>
                     </tr>
                     <tr className="border-b border-gray-200">
@@ -197,54 +193,247 @@ const PlayerDetailsPage = () => {
               <div className="border-b border-gray-200">
                 <nav className="flex">
                   <button
-                    onClick={() => handleTabChange("bio")}
+                    onClick={() => handleTabChange("stats")}
                     className={`px-6 py-4 text-sm font-medium transition-colors ${
-                      activeTab === "bio"
+                      activeTab === "stats"
                         ? "border-b-2 border-yellow-500 text-yellow-600 bg-gray-50"
                         : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
                     }`}
                   >
-                    Biography
+                    Statistics
                   </button>
                 </nav>
               </div>
 
               <div className="p-6">
-                {activeTab === "bio" && (
+                {activeTab === "stats" && (
                   <div>
-                    <h2 className="text-xl font-bold text-gray-800 mb-4">
-                      Player Biography
-                    </h2>
-                    {typeof player.bio === "string" &&
-                      player.bio.split("\n\n").map((paragraph, index) => (
-                        <p
-                          key={index}
-                          className="mb-4 text-gray-700 leading-relaxed"
-                        >
-                          {paragraph}
+                    <div className="grid grid-cols-4 gap-4 mb-8">
+                      <div className="bg-gray-50 p-4 rounded-lg text-center">
+                        <p className="text-sm text-gray-500 mb-1">PPG</p>
+                        <p className="text-2xl font-bold text-gray-800">
+                          {player.statsHistory && player.statsHistory.length > 0
+                            ? (
+                                player.statsHistory.reduce(
+                                  (acc, stat) => acc + (stat.points || 0),
+                                  0
+                                ) / player.statsHistory.length
+                              ).toFixed(1)
+                            : "0.0"}
                         </p>
-                      ))}
+                      </div>
+                      <div className="bg-gray-50 p-4 rounded-lg text-center">
+                        <p className="text-sm text-gray-500 mb-1">RPG</p>
+                        <p className="text-2xl font-bold text-gray-800">
+                          {player.statsHistory && player.statsHistory.length > 0
+                            ? (
+                                player.statsHistory.reduce(
+                                  (acc, stat) =>
+                                    acc + (stat.totalRebounds || 0),
+                                  0
+                                ) / player.statsHistory.length
+                              ).toFixed(1)
+                            : "0.0"}
+                        </p>
+                      </div>
+                      <div className="bg-gray-50 p-4 rounded-lg text-center">
+                        <p className="text-sm text-gray-500 mb-1">APG</p>
+                        <p className="text-2xl font-bold text-gray-800">
+                          {player.statsHistory && player.statsHistory.length > 0
+                            ? (
+                                player.statsHistory.reduce(
+                                  (acc, stat) => acc + (stat.assists || 0),
+                                  0
+                                ) / player.statsHistory.length
+                              ).toFixed(1)
+                            : "0.0"}
+                        </p>
+                      </div>
+                      <div className="bg-gray-50 p-4 rounded-lg text-center">
+                        <p className="text-sm text-gray-500 mb-1">SPG</p>
+                        <p className="text-2xl font-bold text-gray-800">
+                          {player.statsHistory && player.statsHistory.length > 0
+                            ? (
+                                player.statsHistory.reduce(
+                                  (acc, stat) => acc + (stat.steals || 0),
+                                  0
+                                ) / player.statsHistory.length
+                              ).toFixed(1)
+                            : "0.0"}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-4 mb-8">
+                      <div className="bg-gray-50 p-4 rounded-lg text-center">
+                        <p className="text-sm text-gray-500 mb-1">FG%</p>
+                        <p className="text-2xl font-bold text-gray-800">
+                          {player.statsHistory && player.statsHistory.length > 0
+                            ? (
+                                (player.statsHistory.reduce(
+                                  (acc, stat) =>
+                                    acc + (stat.fieldGoalsMade || 0),
+                                  0
+                                ) /
+                                  player.statsHistory.reduce(
+                                    (acc, stat) =>
+                                      acc + (stat.fieldGoalsAttempted || 0),
+                                    0
+                                  )) *
+                                100
+                              ).toFixed(1)
+                            : "0.0"}
+                          %
+                        </p>
+                      </div>
+                      <div className="bg-gray-50 p-4 rounded-lg text-center">
+                        <p className="text-sm text-gray-500 mb-1">3P%</p>
+                        <p className="text-2xl font-bold text-gray-800">
+                          {player.statsHistory && player.statsHistory.length > 0
+                            ? (
+                                (player.statsHistory.reduce(
+                                  (acc, stat) =>
+                                    acc + (stat.threePointsMade || 0),
+                                  0
+                                ) /
+                                  player.statsHistory.reduce(
+                                    (acc, stat) =>
+                                      acc + (stat.threePointsAttempted || 0),
+                                    0
+                                  )) *
+                                100
+                              ).toFixed(1)
+                            : "0.0"}
+                          %
+                        </p>
+                      </div>
+                      <div className="bg-gray-50 p-4 rounded-lg text-center">
+                        <p className="text-sm text-gray-500 mb-1">FT%</p>
+                        <p className="text-2xl font-bold text-gray-800">
+                          {player.statsHistory && player.statsHistory.length > 0
+                            ? (
+                                (player.statsHistory.reduce(
+                                  (acc, stat) =>
+                                    acc + (stat.freeThrowsMade || 0),
+                                  0
+                                ) /
+                                  player.statsHistory.reduce(
+                                    (acc, stat) =>
+                                      acc + (stat.freeThrowsAttempted || 0),
+                                    0
+                                  )) *
+                                100
+                              ).toFixed(1)
+                            : "0.0"}
+                          %
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex justify-between items-center mb-4">
+                      <h2 className="text-xl font-bold text-gray-800">
+                        Stats History
+                      </h2>
+                      <p className="text-sm text-gray-500">
+                        {player.statsHistory?.length || 0} Games Played
+                      </p>
+                    </div>
+
+                    {player.statsHistory && player.statsHistory.length > 0 ? (
+                      <div className="overflow-x-auto">
+                        <table className="min-w-full divide-y divide-gray-200">
+                          <thead className="bg-gray-50">
+                            <tr>
+                              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Date
+                              </th>
+                              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                PTS
+                              </th>
+                              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                REB
+                              </th>
+                              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                AST
+                              </th>
+                              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                STL
+                              </th>
+                              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                BLK
+                              </th>
+                              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                FG
+                              </th>
+                              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                3PT
+                              </th>
+                              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                FT
+                              </th>
+                              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                +/-
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody className="bg-white divide-y divide-gray-200">
+                            {player.statsHistory.map((stat, index) => (
+                              <tr
+                                key={stat.id || index}
+                                className="hover:bg-gray-50"
+                              >
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                  {new Date(
+                                    stat.createdAt
+                                  ).toLocaleDateString()}
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                  {stat.points}
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                  {stat.totalRebounds}
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                  {stat.assists}
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                  {stat.steals}
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                  {stat.blocks}
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                  {stat.fieldGoalsMade}/
+                                  {stat.fieldGoalsAttempted}
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                  {stat.threePointsMade}/
+                                  {stat.threePointsAttempted}
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                  {stat.freeThrowsMade}/
+                                  {stat.freeThrowsAttempted}
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                  {stat.plusMinus}
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    ) : (
+                      <div className="text-center py-8">
+                        <p className="text-gray-500">
+                          No stats available for this player yet.
+                        </p>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
             </div>
           </div>
-        </div>
-      </div>
-      <div className="bg-purple-900 py-12 px-4">
-        <div className="max-w-7xl mx-auto text-center">
-          <h2 className="text-2xl font-bold text-white mb-2">
-            Want to see {player.name} in action?
-          </h2>
-          <p className="text-purple-200 mb-6">
-            Get your tickets for the next home game!
-          </p>
-          <Link
-            to="/schedule"
-            className="inline-block bg-yellow-500 hover:bg-yellow-400 text-black font-bold py-3 px-8 rounded-lg transition-colors duration-200 shadow-md"
-          >
-            View Schedule & Buy Tickets
-          </Link>
         </div>
       </div>
     </div>

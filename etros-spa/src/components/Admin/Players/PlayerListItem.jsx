@@ -63,12 +63,6 @@ const PlayerListItem = ({
           </div>
         ) : (
           <div>
-            <Link
-              to={`/admin/players/${player._id}/stats`}
-              className="text-green-600 hover:text-green-900 mr-3"
-            >
-              Stats
-            </Link>
             <button
               onClick={() => onEdit(player)}
               className="text-blue-600 hover:text-blue-900 mr-3"

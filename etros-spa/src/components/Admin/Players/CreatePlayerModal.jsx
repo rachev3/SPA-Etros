@@ -193,33 +193,44 @@ const CreatePlayerModal = ({ onClose, onPlayerCreated }) => {
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Position(s) *
               </label>
-              <select
-                name="position"
-                required
-                multiple
-                size={5}
-                className={`w-full border rounded-lg px-3 py-2 disabled:bg-gray-100 ${
-                  getFieldError("position")
-                    ? "border-red-500"
-                    : "border-gray-300"
-                }`}
-                value={formData.position}
-                onChange={handleChange}
-                disabled={isSubmitting}
-              >
+              <div className="border border-gray-300 rounded-lg p-3 bg-white">
                 {POSITIONS.map((pos) => (
-                  <option key={pos.value} value={pos.value}>
-                    {pos.label}
-                  </option>
+                  <div
+                    key={pos.value}
+                    className="flex items-center mb-2 last:mb-0"
+                  >
+                    <input
+                      type="checkbox"
+                      id={`pos-${pos.value}`}
+                      name="position"
+                      value={pos.value}
+                      checked={formData.position.includes(pos.value)}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        const isChecked = e.target.checked;
+
+                        setFormData((prev) => ({
+                          ...prev,
+                          position: isChecked
+                            ? [...prev.position, value]
+                            : prev.position.filter((p) => p !== value),
+                        }));
+                      }}
+                      disabled={isSubmitting}
+                      className="h-4 w-4 text-yellow-500 focus:ring-yellow-400 rounded"
+                    />
+                    <label
+                      htmlFor={`pos-${pos.value}`}
+                      className="ml-2 text-sm text-gray-700"
+                    >
+                      {pos.label}
+                    </label>
+                  </div>
                 ))}
-              </select>
-              {getFieldError("position") ? (
+              </div>
+              {getFieldError("position") && (
                 <p className="mt-1 text-sm text-red-600">
                   {getFieldError("position")}
-                </p>
-              ) : (
-                <p className="text-sm text-gray-500 mt-1">
-                  Hold Ctrl/Cmd to select multiple positions
                 </p>
               )}
             </div>
@@ -253,12 +264,12 @@ const CreatePlayerModal = ({ onClose, onPlayerCreated }) => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Height
+                Height (cm)
               </label>
               <input
-                type="text"
+                type="number"
                 name="height"
-                placeholder="6'5"
+                placeholder="185"
                 className={`w-full border rounded-lg px-3 py-2 disabled:bg-gray-100 ${
                   getFieldError("height") ? "border-red-500" : "border-gray-300"
                 }`}
@@ -274,14 +285,14 @@ const CreatePlayerModal = ({ onClose, onPlayerCreated }) => {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Weight (lbs)
+                Weight (kg)
               </label>
               <input
                 type="number"
                 name="weight"
-                placeholder="180"
-                min="100"
-                max="400"
+                placeholder="82"
+                min="40"
+                max="180"
                 className={`w-full border rounded-lg px-3 py-2 disabled:bg-gray-100 ${
                   getFieldError("weight") ? "border-red-500" : "border-gray-300"
                 }`}

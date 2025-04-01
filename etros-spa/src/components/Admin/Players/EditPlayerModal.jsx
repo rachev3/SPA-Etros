@@ -13,6 +13,14 @@ const EditPlayerModal = ({ player, onClose, onPlayerUpdated }) => {
     imageUrl: player.imageUrl || "",
   });
 
+  const POSITIONS = [
+    { value: "PointGuard", label: "Point Guard" },
+    { value: "ShootingGuard", label: "Shooting Guard" },
+    { value: "PowerForward", label: "Power Forward" },
+    { value: "SmallForward", label: "Small Forward" },
+    { value: "Center", label: "Center" },
+  ];
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -94,20 +102,41 @@ const EditPlayerModal = ({ player, onClose, onPlayerUpdated }) => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Position
+                Position(s)
               </label>
-              <select
-                name="position"
-                className="w-full border border-gray-300 rounded-lg px-3 py-2"
-                value={formData.position[0]}
-                onChange={handleChange}
-              >
-                <option value="PointGuard">Point Guard</option>
-                <option value="ShootingGuard">Shooting Guard</option>
-                <option value="PowerForward">Power Forward</option>
-                <option value="SmallForward">Small Forward</option>
-                <option value="Center">Center</option>
-              </select>
+              <div className="border border-gray-300 rounded-lg p-3 bg-white">
+                {POSITIONS.map((pos) => (
+                  <div
+                    key={pos.value}
+                    className="flex items-center mb-2 last:mb-0"
+                  >
+                    <input
+                      type="checkbox"
+                      id={`pos-${pos.value}`}
+                      value={pos.value}
+                      checked={formData.position.includes(pos.value)}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        const isChecked = e.target.checked;
+
+                        setFormData((prev) => ({
+                          ...prev,
+                          position: isChecked
+                            ? [...prev.position, value]
+                            : prev.position.filter((p) => p !== value),
+                        }));
+                      }}
+                      className="h-4 w-4 text-yellow-500 focus:ring-yellow-400 rounded"
+                    />
+                    <label
+                      htmlFor={`pos-${pos.value}`}
+                      className="ml-2 text-sm text-gray-700"
+                    >
+                      {pos.label}
+                    </label>
+                  </div>
+                ))}
+              </div>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -127,12 +156,12 @@ const EditPlayerModal = ({ player, onClose, onPlayerUpdated }) => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Height
+                Height (cm)
               </label>
               <input
-                type="text"
+                type="number"
                 name="height"
-                placeholder="6'5"
+                placeholder="185"
                 className="w-full border border-gray-300 rounded-lg px-3 py-2"
                 value={formData.height}
                 onChange={handleChange}
@@ -140,11 +169,14 @@ const EditPlayerModal = ({ player, onClose, onPlayerUpdated }) => {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Weight (lbs)
+                Weight (kg)
               </label>
               <input
                 type="number"
                 name="weight"
+                placeholder="82"
+                min="40"
+                max="180"
                 className="w-full border border-gray-300 rounded-lg px-3 py-2"
                 value={formData.weight}
                 onChange={handleChange}
