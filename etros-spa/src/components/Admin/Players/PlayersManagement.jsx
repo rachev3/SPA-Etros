@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Link } from "react-router";
 import { usePlayers, useDeletePlayer } from "../../../api/playerApi";
 import CreatePlayerModal from "./CreatePlayerModal";
 import EditPlayerModal from "./EditPlayerModal";
@@ -59,7 +58,6 @@ const PlayersManagement = () => {
         </button>
       </div>
 
-      {/* Players table */}
       <div className="bg-white rounded-lg shadow-sm overflow-hidden">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
@@ -116,7 +114,6 @@ const PlayersManagement = () => {
         </table>
       </div>
 
-      {/* Create Modal */}
       {isAddModalOpen && (
         <div className="fixed inset-0 bg-gray-600/20 backdrop-blur-sm flex items-center justify-center z-50">
           <CreatePlayerModal
@@ -129,7 +126,6 @@ const PlayersManagement = () => {
         </div>
       )}
 
-      {/* Edit Modal */}
       {isEditModalOpen && currentPlayer && (
         <div className="fixed inset-0 bg-gray-600/20 backdrop-blur-sm flex items-center justify-center z-50">
           <EditPlayerModal

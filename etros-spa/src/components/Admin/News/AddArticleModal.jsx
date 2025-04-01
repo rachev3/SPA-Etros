@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { useActionState, useOptimistic } from "react";
+import { useActionState } from "react";
 import { useCreateArticle } from "../../../api/articleApi";
 
 const AddArticleModal = ({ onClose, onSuccess }) => {
   const { create } = useCreateArticle();
-  const [article, setArticle] = useState({
+  const [article] = useState({
     title: "",
     content: "",
     author: "Admin",
@@ -14,7 +14,6 @@ const AddArticleModal = ({ onClose, onSuccess }) => {
     images: [],
   });
 
-  // Use useActionState to handle the form submission
   const [error, submitAction, isPending] = useActionState(
     async (_, formData) => {
       try {
@@ -39,10 +38,10 @@ const AddArticleModal = ({ onClose, onSuccess }) => {
         await create(articleData);
         onSuccess();
         onClose();
-        return null; // No error
+        return null;
       } catch (err) {
         console.error("Failed to create article:", err);
-        return err.message || "Failed to create article"; // Return error message
+        return err.message || "Failed to create article";
       }
     }
   );

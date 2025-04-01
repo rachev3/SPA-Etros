@@ -17,19 +17,15 @@ export const useMatches = (
     totalPages: 1,
     totalResults: 0,
   });
-  // http://localhost:5000/api/matches?populate=playerStats:player
   const fetchMatches = useCallback(async () => {
     try {
       setLoading(true);
-      // Construct URL with pagination parameters
       let url = API_ENDPOINTS.matches.getAll;
       const params = new URLSearchParams();
 
-      // Add pagination params
       if (page) params.append("page", page);
       if (limit) params.append("limit", limit);
 
-      // Add filter params only if filters exist and are not empty
       if (
         filters &&
         typeof filters === "object" &&
@@ -37,18 +33,15 @@ export const useMatches = (
       ) {
         Object.entries(filters).forEach(([key, value]) => {
           if (typeof value === "object") {
-            // Handle operators like [gt], [lt], [in], etc.
             Object.entries(value).forEach(([operator, operatorValue]) => {
               params.append(`${key}[${operator}]`, operatorValue);
             });
           } else {
-            // Handle direct equality filters
             params.append(key, value);
           }
         });
       }
 
-      // Handle population based on the provided settings
       if (populateSettings) {
         params.append("populate", populateSettings);
       }
@@ -94,7 +87,6 @@ export const useMatch = (matchId, populateSettings = "playerStats:player") => {
         setLoading(true);
         let url = API_ENDPOINTS.matches.getById.replace(":id", matchId);
 
-        // Add population parameters if provided
         if (populateSettings) {
           url += `?populate=${populateSettings}`;
         }

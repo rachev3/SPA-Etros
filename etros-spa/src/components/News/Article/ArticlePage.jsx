@@ -24,7 +24,6 @@ const ArticlePage = () => {
     refetch: refetchComments,
   } = useArticleComments(id);
 
-  // Loading state
   if (articleLoading) {
     return (
       <div className="min-h-screen flex justify-center items-center bg-gray-50">
@@ -36,7 +35,6 @@ const ArticlePage = () => {
     );
   }
 
-  // Error state
   if (articleError) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -54,7 +52,6 @@ const ArticlePage = () => {
     );
   }
 
-  // Article not found
   if (!article) {
     return (
       <div className="min-h-screen flex items-center justify-center">

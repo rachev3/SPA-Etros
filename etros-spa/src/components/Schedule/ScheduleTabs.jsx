@@ -28,7 +28,6 @@ const ScheduleTabs = () => {
   return (
     <section className="py-12 px-4">
       <div className="max-w-7xl mx-auto">
-        {/* Tabs */}
         <div className="flex border-b border-gray-200 mb-8">
           <button
             onClick={() => {
@@ -58,7 +57,6 @@ const ScheduleTabs = () => {
           </button>
         </div>
 
-        {/* Matches Section */}
         <div className="bg-white rounded-lg shadow-lg overflow-hidden">
           <div className="p-6 bg-black">
             <h2 className="text-2xl font-bold text-yellow-400">

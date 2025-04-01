@@ -14,12 +14,10 @@ const AdminRoute = ({ children }) => {
   }
 
   if (!isAuthenticated) {
-    // Redirect to login page but save the attempted location
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
   if (!user || user.role !== "admin") {
-    // Redirect to home page if user is not an admin
     return <Navigate to="/" replace />;
   }
 

@@ -44,10 +44,8 @@ const MatchDetails = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
-      {/* Match Header */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-white shadow-lg rounded-lg overflow-hidden">
-          {/* Match Status Banner */}
           <div
             className={`px-6 py-2 ${
               match.status === "upcoming" ? "bg-yellow-500" : "bg-green-500"
@@ -57,8 +55,6 @@ const MatchDetails = () => {
               {match.status === "upcoming" ? "Upcoming Match" : "Final Score"}
             </span>
           </div>
-
-          {/* Match Basic Info */}
           <div className="p-6">
             <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
               <div>
@@ -90,7 +86,6 @@ const MatchDetails = () => {
           </div>
         </div>
 
-        {/* Team Statistics */}
         <div className="mt-8 bg-white shadow-lg rounded-lg overflow-hidden">
           <div className="px-6 py-4 bg-black">
             <h2 className="text-xl font-bold text-yellow-500">
@@ -99,7 +94,6 @@ const MatchDetails = () => {
           </div>
 
           <div className="p-6">
-            {/* Shooting Stats */}
             <div className="mb-8">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">
                 Shooting
@@ -156,7 +150,6 @@ const MatchDetails = () => {
               </div>
             </div>
 
-            {/* Other Stats Grid */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
               <div>
                 <h4 className="text-sm font-medium text-gray-600 mb-1">
@@ -238,7 +231,6 @@ const MatchDetails = () => {
           </div>
         </div>
 
-        {/* Player Stats Section */}
         <div className="mt-8 bg-white shadow-lg rounded-lg overflow-hidden">
           <div className="px-6 py-4 bg-black">
             <h2 className="text-xl font-bold text-yellow-500">

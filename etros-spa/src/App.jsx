@@ -25,7 +25,6 @@ function App() {
     <UserProvider>
       <Router>
         <Routes>
-          {/* Admin Routes with Admin Layout */}
           <Route
             path="/admin"
             element={
@@ -44,7 +43,6 @@ function App() {
             />
           </Route>
 
-          {/* Public Routes with Main Layout */}
           <Route element={<MainLayout />}>
             <Route path="/" element={<HomePage />} />
             <Route path="/team" element={<TeamPage />} />
@@ -55,7 +53,6 @@ function App() {
             <Route path="/news/article/:id" element={<ArticlePage />} />
             <Route path="/about" element={<AboutPage />} />
 
-            {/* Auth Routes */}
             <Route
               path="/login"
               element={

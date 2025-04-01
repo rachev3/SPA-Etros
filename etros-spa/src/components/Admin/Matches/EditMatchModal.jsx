@@ -37,7 +37,6 @@ const EditMatchModal = ({ isOpen, onClose, onSuccess, match }) => {
 
   useEffect(() => {
     if (match) {
-      // Format the date to work with datetime-local input
       const formattedDate = match.date
         ? new Date(match.date).toISOString().slice(0, 16)
         : "";

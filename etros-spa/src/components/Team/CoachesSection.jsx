@@ -1,7 +1,6 @@
 import React from "react";
 
 const CoachesSection = () => {
-  // Replace with actual API data if available
   const coaches = [
     {
       id: 1,

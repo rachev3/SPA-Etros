@@ -41,7 +41,6 @@ const CreateMatchModal = ({ isOpen, onClose, onSuccess }) => {
     try {
       await create(matchData);
       onSuccess();
-      // Reset form
       setMatchData({
         opponent: "",
         date: "",
@@ -107,7 +106,6 @@ const CreateMatchModal = ({ isOpen, onClose, onSuccess }) => {
             </div>
           )}
           <div className="space-y-4">
-            {/* Basic Match Information */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -234,7 +232,6 @@ const CreateMatchModal = ({ isOpen, onClose, onSuccess }) => {
                   </select>
                 </div>
 
-                {/* Team Stats Section */}
                 <div className="mt-6">
                   <h4 className="text-lg font-medium text-gray-800 mb-4">
                     Team Statistics

@@ -61,7 +61,6 @@ const RegisterPage = () => {
           </div>
 
           <div className="p-6">
-            {/* Error message display */}
             {(state.error || state.passwordMatchError) && (
               <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
                 {state.passwordMatchError
@@ -71,7 +70,6 @@ const RegisterPage = () => {
             )}
 
             <form action={formAction} className="space-y-6">
-              {/* Email Field */}
               <div>
                 <label
                   htmlFor="email"
@@ -91,7 +89,6 @@ const RegisterPage = () => {
                 </div>
               </div>
 
-              {/* Username Field */}
               <div>
                 <label
                   htmlFor="username"
@@ -111,7 +108,6 @@ const RegisterPage = () => {
                 </div>
               </div>
 
-              {/* Password Field */}
               <div>
                 <label
                   htmlFor="password"
@@ -138,7 +134,6 @@ const RegisterPage = () => {
                 </div>
               </div>
 
-              {/* Confirm Password Field */}
               <div>
                 <label
                   htmlFor="confirmPassword"
@@ -162,7 +157,6 @@ const RegisterPage = () => {
                 </div>
               </div>
 
-              {/* Submit Button */}
               <div>
                 <button
                   type="submit"
@@ -175,7 +169,6 @@ const RegisterPage = () => {
                 </button>
               </div>
 
-              {/* Sign in link */}
               <div className="mt-6 text-center">
                 <p className="text-sm text-gray-600">
                   Already have an account?{" "}

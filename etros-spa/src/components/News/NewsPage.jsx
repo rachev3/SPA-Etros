@@ -4,7 +4,6 @@ import ArticleGridSection from "./ArticleGridSection";
 const NewsPage = () => {
   return (
     <div className="bg-white">
-      {/* Hero section */}
       <section className="bg-black py-16 px-4">
         <div className="max-w-7xl mx-auto text-center">
           <h1 className="text-4xl font-bold text-white mb-2">
@@ -18,7 +17,6 @@ const NewsPage = () => {
         </div>
       </section>
 
-      {/* Article List Section */}
       <ArticleGridSection />
     </div>
   );

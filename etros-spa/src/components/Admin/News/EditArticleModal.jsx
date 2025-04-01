@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
 import { useArticle, useUpdateArticle } from "../../../api/articleApi";
 
 const EditArticleModal = ({ articleId, onClose, onSuccess }) => {
@@ -12,8 +12,7 @@ const EditArticleModal = ({ articleId, onClose, onSuccess }) => {
     images: [],
   });
 
-  // Update form data when article is loaded
-  React.useEffect(() => {
+  useEffect(() => {
     if (article) {
       setFormData({
         title: article.title,
@@ -62,7 +61,6 @@ const EditArticleModal = ({ articleId, onClose, onSuccess }) => {
     );
   }
 
-  // If article is not yet loaded, return null to avoid rendering
   if (!article) return null;
 
   return (

@@ -31,12 +31,10 @@ const CreatePlayerModal = ({ onClose, onPlayerCreated }) => {
     setIsSubmitting(true);
 
     try {
-      // Basic validation before API call
       if (!formData.name) throw new Error("Name is required");
       if (!formData.number) throw new Error("Jersey number is required");
       if (!formData.bornYear) throw new Error("Born year is required");
 
-      // Format the data for API
       const payload = {
         name: formData.name,
         number: formData.number,
@@ -44,12 +42,10 @@ const CreatePlayerModal = ({ onClose, onPlayerCreated }) => {
         bornYear: Number(formData.bornYear),
       };
 
-      // Only add optional fields if they exist
       if (formData.height) payload.height = formData.height;
       if (formData.weight) payload.weight = Number(formData.weight);
       if (formData.imageUrl) payload.imageUrl = formData.imageUrl;
 
-      // Make API call
       const result = await create(payload);
 
       onPlayerCreated(result);
@@ -57,11 +53,9 @@ const CreatePlayerModal = ({ onClose, onPlayerCreated }) => {
     } catch (err) {
       console.error("Create player error:", err);
 
-      // Handle different error types according to the API error format
       if (err.response && err.response.data) {
         const errorData = err.response.data;
 
-        // Handle validation errors specifically
         if (errorData.errorCode === "VALIDATION_ERROR") {
           if (errorData.details) {
             setValidationErrors(errorData.details);
@@ -69,24 +63,18 @@ const CreatePlayerModal = ({ onClose, onPlayerCreated }) => {
           setError(
             errorData.message || "Please correct the errors in the form"
           );
-        }
-        // Handle duplicate value errors
-        else if (errorData.errorCode === "DUPLICATE_VALUE") {
+        } else if (errorData.errorCode === "DUPLICATE_VALUE") {
           setError(
             errorData.message || "A player with this information already exists"
           );
-        }
-        // Handle other error types
-        else {
+        } else {
           setError(errorData.message || `Error: ${err.response.status}`);
         }
       } else if (err.request) {
-        // Network error - request made but no response
         setError(
           "Unable to connect to the server. Please check your connection."
         );
       } else {
-        // Client-side error
         setError(err.message || "An error occurred while creating the player");
       }
     } finally {
@@ -97,7 +85,6 @@ const CreatePlayerModal = ({ onClose, onPlayerCreated }) => {
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    // Clear validation error when field is edited
     if (validationErrors[name]) {
       setValidationErrors((prev) => ({ ...prev, [name]: undefined }));
     }
@@ -119,7 +106,6 @@ const CreatePlayerModal = ({ onClose, onPlayerCreated }) => {
     }
   };
 
-  // Function to get error message for a field
   const getFieldError = (fieldName) => {
     return validationErrors[fieldName];
   };

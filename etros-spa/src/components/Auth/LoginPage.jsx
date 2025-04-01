@@ -30,13 +30,11 @@ const LoginPage = () => {
     setLoginError(null);
 
     try {
-      // Call the login function from useAuth hook
       await login({
         email: formData.email,
         password: formData.password,
       });
 
-      // Redirect to home page after successful login
       navigate("/");
     } catch (err) {
       console.error("Login failed:", err);
@@ -49,7 +47,6 @@ const LoginPage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md mx-auto">
-        {/* Logo and title */}
         <div className="text-center mb-10">
           <h2 className="text-3xl font-bold text-gray-900">
             Welcome to <span className="text-yellow-500">Etros</span>
@@ -57,17 +54,13 @@ const LoginPage = () => {
           <p className="mt-2 text-gray-600">Sign in to access your account</p>
         </div>
 
-        {/* Login Card */}
         <div className="bg-white shadow-xl rounded-lg overflow-hidden">
-          {/* Card header */}
           <div className="bg-black py-4 px-6">
             <h3 className="text-xl font-bold text-white">Login</h3>
             <div className="w-16 h-1 bg-yellow-400 mt-2"></div>
           </div>
 
-          {/* Card body */}
           <div className="p-6">
-            {/* Error message display */}
             {(loginError || error) && (
               <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
                 {loginError ||
@@ -77,7 +70,6 @@ const LoginPage = () => {
             )}
 
             <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Email Field */}
               <div>
                 <label
                   htmlFor="email"
@@ -100,7 +92,6 @@ const LoginPage = () => {
                 </div>
               </div>
 
-              {/* Password Field */}
               <div>
                 <label
                   htmlFor="password"
@@ -158,7 +149,6 @@ const LoginPage = () => {
                 </div>
               </div>
 
-              {/* Submit Button */}
               <div>
                 <button
                   type="submit"
@@ -171,7 +161,6 @@ const LoginPage = () => {
                 </button>
               </div>
 
-              {/* Divider */}
               <div className="relative py-2">
                 <div className="absolute inset-0 flex items-center">
                   <div className="w-full border-t border-gray-300"></div>
@@ -184,7 +173,6 @@ const LoginPage = () => {
               </div>
             </form>
 
-            {/* Sign up link */}
             <div className="mt-6 text-center">
               <p className="text-sm text-gray-600">
                 Don't have an account?{" "}

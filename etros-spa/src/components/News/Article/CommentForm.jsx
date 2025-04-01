@@ -30,7 +30,7 @@ const CommentForm = ({
         if (onCancel) onCancel();
         return null;
       } catch (err) {
-        return "Failed to post comment. Please try again.";
+        return err.message || "Failed to post comment. Please try again.";
       }
     }
   );

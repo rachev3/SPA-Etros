@@ -7,7 +7,6 @@ const Comment = ({ comment, onDelete, onEdit, currentUser }) => {
   const [isEditing, setIsEditing] = useState(false);
   const { deleteComment } = useDeleteComment();
 
-  // Check if the user is logged in and owns the comment
   const isOwner =
     currentUser &&
     currentUser._id &&

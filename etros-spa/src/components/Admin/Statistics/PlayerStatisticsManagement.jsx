@@ -27,7 +27,6 @@ const PlayerStatisticsManagement = () => {
       <h1 className="text-2xl font-bold text-gray-800">
         Player Statistics Management
       </h1>
-      {/* Match Selector Section (merged in here) */}
       {matchesLoading && <div>Loading matches...</div>}
       {matchesError && <div>Error loading matches: {matchesError}</div>}
       {matches && (
@@ -53,7 +52,6 @@ const PlayerStatisticsManagement = () => {
           </div>
         </div>
       )}
-      {/* Player Stats Section */}
       {selectedMatchId && (
         <div>
           <div className="flex justify-between items-center mb-4">
@@ -68,7 +66,7 @@ const PlayerStatisticsManagement = () => {
           <PlayerStatsList
             matchId={selectedMatchId}
             refreshTrigger={statsRefreshTrigger}
-            key={selectedMatchId} // key to force re-render when match changes
+            key={selectedMatchId}
           />
         </div>
       )}

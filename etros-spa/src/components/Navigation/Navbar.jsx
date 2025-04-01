@@ -12,7 +12,6 @@ const Navbar = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
-  // Function to check if the current path matches the link
   const isActive = (path) => {
     return location.pathname === path;
   };
@@ -26,7 +25,6 @@ const Navbar = () => {
     <nav className="bg-black text-white sticky top-0 z-50 shadow-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
-          {/* Logo and Main Navigation */}
           <div className="flex items-center">
             <div className="flex-shrink-0 flex items-center">
               <img
@@ -97,7 +95,6 @@ const Navbar = () => {
             </div>
           </div>
 
-          {/* Auth Buttons */}
           <div className="hidden md:block">
             <div className="ml-4 flex items-center md:ml-6 space-x-4">
               {isAuthenticated ? (
@@ -139,14 +136,12 @@ const Navbar = () => {
             </div>
           </div>
 
-          {/* Mobile menu button */}
           <div className="md:hidden">
             <button
               onClick={toggleMenu}
               className="inline-flex items-center justify-center p-2 rounded-md text-white hover:text-yellow-400 focus:outline-none"
             >
               <span className="sr-only">Open main menu</span>
-              {/* Menu icon */}
               <svg
                 className={`${isMenuOpen ? "hidden" : "block"} h-6 w-6`}
                 xmlns="http://www.w3.org/2000/svg"
@@ -161,7 +156,6 @@ const Navbar = () => {
                   d="M4 6h16M4 12h16M4 18h16"
                 />
               </svg>
-              {/* Close icon */}
               <svg
                 className={`${isMenuOpen ? "block" : "hidden"} h-6 w-6`}
                 xmlns="http://www.w3.org/2000/svg"
@@ -181,7 +175,6 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* Mobile menu */}
       <div className={`${isMenuOpen ? "block" : "hidden"} md:hidden`}>
         <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
           <Link

@@ -12,10 +12,8 @@ export const UserProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check if user is authenticated and load user data on mount
     const loadUser = () => {
       if (checkIsAuthenticated()) {
-        // Get user data from localStorage
         const userData = getCurrentUser();
         setUser(userData);
       }
@@ -26,7 +24,6 @@ export const UserProvider = ({ children }) => {
   }, []);
 
   const login = (responseData) => {
-    // responseData is from API which has { data: { user info } } structure
     if (responseData && responseData.data) {
       setUser(responseData.data);
     } else {
@@ -39,7 +36,6 @@ export const UserProvider = ({ children }) => {
     setUser(null);
   };
 
-  // Provide the complete context value
   const value = {
     user,
     loading,

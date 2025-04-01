@@ -2,8 +2,6 @@ import { useState, useEffect, useCallback } from "react";
 import apiClient from "./axiosConfig/axios";
 import { API_ENDPOINTS } from "./axiosConfig/config";
 
-// Helper to ensure comments are always returned as an array
-
 export const useComments = () => {
   const [comments, setComments] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -46,7 +44,6 @@ export const useArticleComments = (articleId, populateSettings = "author") => {
       setLoading(true);
       let url = API_ENDPOINTS.comments.getByArticleId.replace(":id", articleId);
 
-      // Add population parameters if provided
       if (populateSettings) {
         url += `?populate=${populateSettings}`;
       }

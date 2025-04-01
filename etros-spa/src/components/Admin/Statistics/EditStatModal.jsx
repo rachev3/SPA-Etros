@@ -40,7 +40,6 @@ const EditStatModal = ({ stat, isOpen, onClose, onSuccess }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Remove calculated fields before sending to API
       await updatePlayerStats(stat._id, formData);
       onSuccess(stat.matchId);
       onClose();
@@ -82,7 +81,6 @@ const EditStatModal = ({ stat, isOpen, onClose, onSuccess }) => {
           </div>
 
           <form onSubmit={handleSubmit}>
-            {/* Player Selection */}
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Player
@@ -103,7 +101,6 @@ const EditStatModal = ({ stat, isOpen, onClose, onSuccess }) => {
                 ))}
               </select>
             </div>
-            {/* Field Goals */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -133,7 +130,6 @@ const EditStatModal = ({ stat, isOpen, onClose, onSuccess }) => {
               </div>
             </div>
 
-            {/* Two Points */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -163,7 +159,6 @@ const EditStatModal = ({ stat, isOpen, onClose, onSuccess }) => {
               </div>
             </div>
 
-            {/* Three Points */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -193,7 +188,6 @@ const EditStatModal = ({ stat, isOpen, onClose, onSuccess }) => {
               </div>
             </div>
 
-            {/* Free Throws */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -223,7 +217,6 @@ const EditStatModal = ({ stat, isOpen, onClose, onSuccess }) => {
               </div>
             </div>
 
-            {/* Rebounds */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -252,8 +245,6 @@ const EditStatModal = ({ stat, isOpen, onClose, onSuccess }) => {
                 />
               </div>
             </div>
-
-            {/* Other Stats */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -296,7 +287,6 @@ const EditStatModal = ({ stat, isOpen, onClose, onSuccess }) => {
               </div>
             </div>
 
-            {/* Additional Stats */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">

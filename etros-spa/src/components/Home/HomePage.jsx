@@ -9,7 +9,6 @@ import Sponsors from "./Sponsors";
 const HomePage = () => {
   return (
     <>
-      {/* Hero Section */}
       <section
         className="relative h-[600px] bg-cover bg-center"
         style={{

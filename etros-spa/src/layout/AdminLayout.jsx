@@ -17,13 +17,11 @@ const AdminLayout = () => {
 
   return (
     <div className="flex h-screen bg-gray-100">
-      {/* Sidebar */}
       <div
         className={`${
           isSidebarCollapsed ? "w-20" : "w-64"
         } bg-gray-900 text-white transition-all duration-300 ease-in-out h-screen fixed left-0 top-0 z-40`}
       >
-        {/* Admin Header */}
         <div className="flex items-center justify-between p-4 border-b border-gray-700">
           {!isSidebarCollapsed && (
             <div className="flex items-center">
@@ -71,7 +69,6 @@ const AdminLayout = () => {
           </button>
         </div>
 
-        {/* Sidebar Navigation */}
         <nav className="mt-6">
           <div className="px-4">
             <Link
@@ -180,7 +177,6 @@ const AdminLayout = () => {
           </div>
         </nav>
 
-        {/* Logout Section */}
         <div className="absolute bottom-0 w-full border-t border-gray-700 p-4">
           <Link
             to="/"
@@ -205,13 +201,11 @@ const AdminLayout = () => {
         </div>
       </div>
 
-      {/* Main Content */}
       <div
         className={`flex-1 ${
           isSidebarCollapsed ? "ml-20" : "ml-64"
         } transition-all duration-300 ease-in-out`}
       >
-        {/* Top Header */}
         <header className="bg-white shadow-sm py-4 px-6 flex justify-between items-center">
           <h1 className="text-2xl font-semibold text-gray-800">Admin Panel</h1>
           <div className="flex items-center">
@@ -221,7 +215,6 @@ const AdminLayout = () => {
           </div>
         </header>
 
-        {/* Page Content */}
         <main className="p-6">
           <Outlet />
         </main>

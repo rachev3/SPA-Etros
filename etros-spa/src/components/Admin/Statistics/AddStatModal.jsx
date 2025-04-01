@@ -103,7 +103,6 @@ const AddStatModal = ({ matchId, onClose, onSuccess }) => {
               </select>
             </div>
 
-            {/* Field Goals */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -133,7 +132,6 @@ const AddStatModal = ({ matchId, onClose, onSuccess }) => {
               </div>
             </div>
 
-            {/* Two Points */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -163,7 +161,6 @@ const AddStatModal = ({ matchId, onClose, onSuccess }) => {
               </div>
             </div>
 
-            {/* Three Points */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -193,7 +190,6 @@ const AddStatModal = ({ matchId, onClose, onSuccess }) => {
               </div>
             </div>
 
-            {/* Free Throws */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -223,7 +219,6 @@ const AddStatModal = ({ matchId, onClose, onSuccess }) => {
               </div>
             </div>
 
-            {/* Rebounds */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -253,7 +248,6 @@ const AddStatModal = ({ matchId, onClose, onSuccess }) => {
               </div>
             </div>
 
-            {/* Other Stats */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -296,7 +290,6 @@ const AddStatModal = ({ matchId, onClose, onSuccess }) => {
               </div>
             </div>
 
-            {/* Additional Stats */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">

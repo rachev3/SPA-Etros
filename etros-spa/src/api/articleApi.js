@@ -16,7 +16,6 @@ export const useArticles = (page = 1, limit) => {
   const fetchArticles = useCallback(async () => {
     try {
       setLoading(true);
-      // Construct URL with pagination parameters
       let url = API_ENDPOINTS.articles.getAll;
       const params = new URLSearchParams();
 
@@ -29,10 +28,8 @@ export const useArticles = (page = 1, limit) => {
 
       const response = await apiClient.get(url);
 
-      // Set articles from the response data
       setArticles(response.data.data || []);
 
-      // Set pagination metadata
       setPagination({
         page: response.data.pagination.page,
         limit: response.data.pagination.limit,

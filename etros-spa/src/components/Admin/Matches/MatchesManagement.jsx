@@ -28,7 +28,6 @@ const MatchesManagement = () => {
       setDeleteConfirmId(null);
     } catch (err) {
       console.error("Failed to delete match:", err);
-      // You might want to show an error message to the user here
     }
   };
 
@@ -70,7 +69,6 @@ const MatchesManagement = () => {
         </button>
       </div>
 
-      {/* Matches table */}
       <div className="bg-white rounded-lg shadow-sm overflow-hidden">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
@@ -139,14 +137,12 @@ const MatchesManagement = () => {
         </table>
       </div>
 
-      {/* Create Match Modal */}
       <CreateMatchModal
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
         onSuccess={handleCreateSuccess}
       />
 
-      {/* Edit Match Modal */}
       <EditMatchModal
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}

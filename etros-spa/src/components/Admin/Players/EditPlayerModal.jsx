@@ -29,7 +29,7 @@ const EditPlayerModal = ({ player, onClose, onPlayerUpdated }) => {
     if (name === "position") {
       setFormData((prev) => ({
         ...prev,
-        [name]: [value], // Wrap in array since position is array type
+        [name]: [value],
       }));
     } else {
       setFormData((prev) => ({
