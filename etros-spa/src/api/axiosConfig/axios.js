@@ -37,7 +37,6 @@ apiClient.interceptors.response.use(
 
     const { response } = error;
 
-    // Don't redirect on auth endpoint 401 errors (let components handle these)
     const isAuthEndpoint =
       error.config?.url?.includes("/auth/login") ||
       error.config?.url?.includes("/auth/register");

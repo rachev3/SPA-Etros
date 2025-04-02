@@ -25,7 +25,6 @@ const EditPlayerModal = ({ player, onClose, onPlayerUpdated }) => {
   const [error, submitAction, isPending] = useActionState(
     async (_, formData) => {
       try {
-        // Get all selected positions from checkboxes
         const selectedPositions = Array.from(
           document.querySelectorAll('input[name="position"]:checked')
         ).map((input) => input.value);

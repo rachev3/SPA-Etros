@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useArticle, useUpdateArticle } from "../../../api/articleApi";
-import { useActionState } from "react";
 import LoadingSpinner from "../../shared/LoadingSpinner";
 
 const EditArticleModal = ({ articleId, onClose, onSuccess }) => {

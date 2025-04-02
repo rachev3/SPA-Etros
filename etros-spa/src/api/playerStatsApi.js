@@ -111,7 +111,6 @@ export const usePlayerStatsByMatchId = (matchId) => {
       setPlayerStats(response.data.data);
       setError(null);
     } catch (err) {
-      // If it's a 404, it just means no stats exist yet - not an error
       if (err.response && err.response.status === 404) {
         setPlayerStats([]);
         setError(null);
@@ -134,7 +133,6 @@ export const usePlayerStatsByMatchId = (matchId) => {
 export const useCreatePlayerStats = () => {
   const create = async (playerStatsData) => {
     try {
-      // Validate shot attempts before making the API call
       validateShotAttempts(playerStatsData);
 
       const response = await apiClient.post(
@@ -144,7 +142,7 @@ export const useCreatePlayerStats = () => {
       return response.data.data;
     } catch (error) {
       console.error("Error in createPlayerStats:", error);
-      throw error; // Re-throw the error to be handled by the component
+      throw error;
     }
   };
 
@@ -154,7 +152,6 @@ export const useCreatePlayerStats = () => {
 export const useUpdatePlayerStats = () => {
   const update = async (playerStatsId, playerStatsData) => {
     try {
-      // Validate shot attempts before making the API call
       validateShotAttempts(playerStatsData);
 
       const url = API_ENDPOINTS.playerStats.update.replace(
@@ -168,7 +165,7 @@ export const useUpdatePlayerStats = () => {
       return response.data.data;
     } catch (error) {
       console.error("Error in updatePlayerStats:", error);
-      throw error; // Re-throw the error to be handled by the component
+      throw error;
     }
   };
 

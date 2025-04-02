@@ -30,7 +30,6 @@ const AddStatModal = ({ matchId, onClose, onSuccess }) => {
     plusMinus: 0,
   });
 
-  // Calculate derived statistics whenever relevant fields change
   useEffect(() => {
     const twoPointPoints = formData.twoPointsMade * 2;
     const threePointPoints = formData.threePointsMade * 3;
