@@ -1,50 +1,32 @@
-import { useState } from "react";
+import { useState, useActionState } from "react";
 import { Link, useNavigate } from "react-router";
 import { useAuth } from "../../hooks/useAuth";
-import { useActionState } from "react";
 
 const LoginPage = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-    rememberMe: false,
-  });
+
   const [showPassword, setShowPassword] = useState(false);
-
-  const [loginError, submitAction, isPending] = useActionState(
-    async (prevState, formData) => {
-      try {
-        const email = formData.get("email");
-        const password = formData.get("password");
-
-        await login({
-          email,
-          password,
-        });
-
-        navigate("/");
-        return null;
-      } catch (err) {
-        console.error("Login failed:", err);
-        return err.message || "Invalid email or password. Please try again.";
-      }
-    },
-    null
-  );
-
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData({
-      ...formData,
-      [name]: type === "checkbox" ? checked : value,
-    });
-  };
-
   const toggleShowPassword = () => {
     setShowPassword(!showPassword);
   };
+
+  const [loginError, setLoginError] = useState(null);
+
+  const loginHandler = async (_, formData) => {
+    const values = Object.fromEntries(formData);
+    try {
+      await login(values);
+      navigate(-1);
+    } catch (error) {
+      setLoginError(error.message);
+    }
+  };
+
+  const [_, loginAction, isLoading] = useActionState(loginHandler, {
+    email: "",
+    password: "",
+  });
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white py-12 px-4 sm:px-6 lg:px-8">
@@ -69,7 +51,7 @@ const LoginPage = () => {
               </div>
             )}
 
-            <form action={submitAction} className="space-y-6">
+            <form action={loginAction} className="space-y-6">
               <div>
                 <label
                   htmlFor="email"
@@ -84,8 +66,6 @@ const LoginPage = () => {
                     type="email"
                     autoComplete="email"
                     required
-                    value={formData.email}
-                    onChange={handleChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
                     placeholder="your.email@example.com"
                   />
@@ -106,8 +86,6 @@ const LoginPage = () => {
                     type={showPassword ? "text" : "password"}
                     autoComplete="current-password"
                     required
-                    value={formData.password}
-                    onChange={handleChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
                     placeholder="••••••••"
                   />
@@ -152,24 +130,13 @@ const LoginPage = () => {
               <div>
                 <button
                   type="submit"
-                  disabled={isPending}
+                  disabled={isLoading}
                   className={`w-full py-3 px-4 bg-black hover:bg-gray-900 text-white font-bold rounded-md shadow-sm transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 ${
-                    isPending ? "opacity-70 cursor-not-allowed" : ""
+                    isLoading ? "opacity-70 cursor-not-allowed" : ""
                   }`}
                 >
-                  {isPending ? "Signing In..." : "Sign In"}
+                  {isLoading ? "Signing In..." : "Sign In"}
                 </button>
-              </div>
-
-              <div className="relative py-2">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-300"></div>
-                </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-gray-500">
-                    Or continue with
-                  </span>
-                </div>
               </div>
             </form>
 

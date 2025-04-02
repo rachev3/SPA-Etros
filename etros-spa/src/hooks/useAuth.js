@@ -12,8 +12,11 @@ export const useAuth = () => {
 
   const handleLogin = useCallback(
     async (credentials) => {
+      console.log(credentials);
       const data = await loginUser(credentials);
+      console.log(1);
       login(data);
+      console.log(2);
       return data;
     },
     [login]

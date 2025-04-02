@@ -1,4 +1,5 @@
 export const handleApiError = (error) => {
+  console.log("In error handler");
   if (error.response) {
     return {
       status: error.response.status,
