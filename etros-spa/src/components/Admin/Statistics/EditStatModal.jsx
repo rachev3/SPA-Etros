@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useUpdatePlayerStats } from "../../../api/playerStatsApi";
 import { usePlayers } from "../../../api/playerApi";
+import { useActionState } from "react";
 
 const EditStatModal = ({ stat, isOpen, onClose, onSuccess }) => {
   const { update: updatePlayerStats } = useUpdatePlayerStats();
@@ -37,338 +38,354 @@ const EditStatModal = ({ stat, isOpen, onClose, onSuccess }) => {
     });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      await updatePlayerStats(stat._id, formData);
-      onSuccess(stat.matchId);
-      onClose();
-    } catch (error) {
-      console.error("Error updating stat:", error);
-      alert("Failed to update statistic");
+  const [error, submitAction, isPending] = useActionState(
+    async (_, formData) => {
+      try {
+        // Extract form data fields
+        const updatedStats = {
+          playerId: formData.get("playerId"),
+          fieldGoalsMade: parseInt(formData.get("fieldGoalsMade")) || 0,
+          fieldGoalsAttempted:
+            parseInt(formData.get("fieldGoalsAttempted")) || 0,
+          twoPointsMade: parseInt(formData.get("twoPointsMade")) || 0,
+          twoPointsAttempted: parseInt(formData.get("twoPointsAttempted")) || 0,
+          threePointsMade: parseInt(formData.get("threePointsMade")) || 0,
+          threePointsAttempted:
+            parseInt(formData.get("threePointsAttempted")) || 0,
+          freeThrowsMade: parseInt(formData.get("freeThrowsMade")) || 0,
+          freeThrowsAttempted:
+            parseInt(formData.get("freeThrowsAttempted")) || 0,
+          offensiveRebounds: parseInt(formData.get("offensiveRebounds")) || 0,
+          defensiveRebounds: parseInt(formData.get("defensiveRebounds")) || 0,
+          assists: parseInt(formData.get("assists")) || 0,
+          steals: parseInt(formData.get("steals")) || 0,
+          blocks: parseInt(formData.get("blocks")) || 0,
+          turnovers: parseInt(formData.get("turnovers")) || 0,
+          fouls: parseInt(formData.get("fouls")) || 0,
+          plusMinus: parseInt(formData.get("plusMinus")) || 0,
+          efficiency: parseInt(formData.get("efficiency")) || 0,
+          points: parseInt(formData.get("points")) || 0,
+        };
+
+        await updatePlayerStats(stat._id, updatedStats);
+        onSuccess(stat.matchId);
+        onClose();
+        return null;
+      } catch (error) {
+        console.error("Error updating stat:", error);
+        return "Failed to update statistic";
+      }
     }
-  };
+  );
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0  bg-gray-600/20 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-        <div className="p-6">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-bold text-gray-900">
-              Edit Player Statistics
-            </h2>
-            <button
-              onClick={onClose}
-              className="text-gray-500 hover:text-gray-700"
+    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black bg-opacity-50">
+      <div className="relative bg-white rounded-lg shadow-lg max-w-4xl w-full mx-4 my-8">
+        <div className="flex justify-between items-center p-4 border-b">
+          <h3 className="text-xl font-semibold">Edit Player Statistics</h3>
+          <button
+            className="text-gray-400 hover:text-gray-600"
+            onClick={onClose}
+          >
+            <svg
+              className="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </button>
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+        </div>
+
+        {error && (
+          <div className="mx-4 mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+            {error}
+          </div>
+        )}
+
+        <form action={submitAction} className="p-4">
+          <div className="mb-6">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Player
+            </label>
+            <select
+              name="playerId"
+              className="w-full border border-gray-300 rounded px-3 py-2"
+              defaultValue={stat.player?._id || ""}
+            >
+              <option value="">-- Select Player --</option>
+              {players?.map((player) => (
+                <option key={player._id} value={player._id}>
+                  {player.name} (#{player.number})
+                </option>
+              ))}
+            </select>
           </div>
 
-          <form onSubmit={handleSubmit}>
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Player
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Field Goals Made
               </label>
-              <select
-                name="playerId"
-                value={formData.playerId}
-                onChange={handleChange}
-                required
-                disabled
-                className="w-full p-3 border border-gray-300 rounded-lg bg-gray-100"
-              >
-                <option value="">Select a player</option>
-                {players?.map((player) => (
-                  <option key={player._id} value={player._id}>
-                    {player.name} (#{player.number})
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Field Goals Made
-                </label>
-                <input
-                  type="number"
-                  name="fieldGoalsMade"
-                  value={formData.fieldGoalsMade}
-                  onChange={handleChange}
-                  min="0"
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Field Goals Attempted
-                </label>
-                <input
-                  type="number"
-                  name="fieldGoalsAttempted"
-                  value={formData.fieldGoalsAttempted}
-                  onChange={handleChange}
-                  min="0"
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
-                />
-              </div>
+              <input
+                type="number"
+                name="fieldGoalsMade"
+                className="w-full border border-gray-300 rounded px-3 py-2"
+                min="0"
+                defaultValue={formData.fieldGoalsMade}
+              />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Two Points Made
-                </label>
-                <input
-                  type="number"
-                  name="twoPointsMade"
-                  value={formData.twoPointsMade}
-                  onChange={handleChange}
-                  min="0"
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Two Points Attempted
-                </label>
-                <input
-                  type="number"
-                  name="twoPointsAttempted"
-                  value={formData.twoPointsAttempted}
-                  onChange={handleChange}
-                  min="0"
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
-                />
-              </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Field Goals Attempted
+              </label>
+              <input
+                type="number"
+                name="fieldGoalsAttempted"
+                className="w-full border border-gray-300 rounded px-3 py-2"
+                min="0"
+                defaultValue={formData.fieldGoalsAttempted}
+              />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Three Points Made
-                </label>
-                <input
-                  type="number"
-                  name="threePointsMade"
-                  value={formData.threePointsMade}
-                  onChange={handleChange}
-                  min="0"
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Three Points Attempted
-                </label>
-                <input
-                  type="number"
-                  name="threePointsAttempted"
-                  value={formData.threePointsAttempted}
-                  onChange={handleChange}
-                  min="0"
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
-                />
-              </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                2PT Made
+              </label>
+              <input
+                type="number"
+                name="twoPointsMade"
+                className="w-full border border-gray-300 rounded px-3 py-2"
+                min="0"
+                defaultValue={formData.twoPointsMade}
+              />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Free Throws Made
-                </label>
-                <input
-                  type="number"
-                  name="freeThrowsMade"
-                  value={formData.freeThrowsMade}
-                  onChange={handleChange}
-                  min="0"
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Free Throws Attempted
-                </label>
-                <input
-                  type="number"
-                  name="freeThrowsAttempted"
-                  value={formData.freeThrowsAttempted}
-                  onChange={handleChange}
-                  min="0"
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
-                />
-              </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                2PT Attempted
+              </label>
+              <input
+                type="number"
+                name="twoPointsAttempted"
+                className="w-full border border-gray-300 rounded px-3 py-2"
+                min="0"
+                defaultValue={formData.twoPointsAttempted}
+              />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Offensive Rebounds
-                </label>
-                <input
-                  type="number"
-                  name="offensiveRebounds"
-                  value={formData.offensiveRebounds}
-                  onChange={handleChange}
-                  min="0"
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Defensive Rebounds
-                </label>
-                <input
-                  type="number"
-                  name="defensiveRebounds"
-                  value={formData.defensiveRebounds}
-                  onChange={handleChange}
-                  min="0"
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
-                />
-              </div>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Assists
-                </label>
-                <input
-                  type="number"
-                  name="assists"
-                  value={formData.assists}
-                  onChange={handleChange}
-                  min="0"
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Steals
-                </label>
-                <input
-                  type="number"
-                  name="steals"
-                  value={formData.steals}
-                  onChange={handleChange}
-                  min="0"
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Blocks
-                </label>
-                <input
-                  type="number"
-                  name="blocks"
-                  value={formData.blocks}
-                  onChange={handleChange}
-                  min="0"
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
-                />
-              </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                3PT Made
+              </label>
+              <input
+                type="number"
+                name="threePointsMade"
+                className="w-full border border-gray-300 rounded px-3 py-2"
+                min="0"
+                defaultValue={formData.threePointsMade}
+              />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Turnovers
-                </label>
-                <input
-                  type="number"
-                  name="turnovers"
-                  value={formData.turnovers}
-                  onChange={handleChange}
-                  min="0"
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Fouls
-                </label>
-                <input
-                  type="number"
-                  name="fouls"
-                  value={formData.fouls}
-                  onChange={handleChange}
-                  min="0"
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Plus/Minus
-                </label>
-                <input
-                  type="number"
-                  name="plusMinus"
-                  value={formData.plusMinus}
-                  onChange={handleChange}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Points
-                </label>
-                <input
-                  type="number"
-                  name="points"
-                  value={formData.points}
-                  onChange={handleChange}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Efficiency
-                </label>
-                <input
-                  type="number"
-                  name="efficiency"
-                  value={formData.efficiency}
-                  onChange={handleChange}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
-                />
-              </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                3PT Attempted
+              </label>
+              <input
+                type="number"
+                name="threePointsAttempted"
+                className="w-full border border-gray-300 rounded px-3 py-2"
+                min="0"
+                defaultValue={formData.threePointsAttempted}
+              />
             </div>
 
-            <div className="flex justify-end gap-3">
-              <button
-                type="button"
-                onClick={onClose}
-                className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="px-4 py-2 bg-yellow-500 text-black rounded-lg hover:bg-yellow-600 transition-colors"
-              >
-                Update Statistics
-              </button>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Free Throws Made
+              </label>
+              <input
+                type="number"
+                name="freeThrowsMade"
+                className="w-full border border-gray-300 rounded px-3 py-2"
+                min="0"
+                defaultValue={formData.freeThrowsMade}
+              />
             </div>
-          </form>
-        </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Free Throws Attempted
+              </label>
+              <input
+                type="number"
+                name="freeThrowsAttempted"
+                className="w-full border border-gray-300 rounded px-3 py-2"
+                min="0"
+                defaultValue={formData.freeThrowsAttempted}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Offensive Rebounds
+              </label>
+              <input
+                type="number"
+                name="offensiveRebounds"
+                className="w-full border border-gray-300 rounded px-3 py-2"
+                min="0"
+                defaultValue={formData.offensiveRebounds}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Defensive Rebounds
+              </label>
+              <input
+                type="number"
+                name="defensiveRebounds"
+                className="w-full border border-gray-300 rounded px-3 py-2"
+                min="0"
+                defaultValue={formData.defensiveRebounds}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Assists
+              </label>
+              <input
+                type="number"
+                name="assists"
+                className="w-full border border-gray-300 rounded px-3 py-2"
+                min="0"
+                defaultValue={formData.assists}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Steals
+              </label>
+              <input
+                type="number"
+                name="steals"
+                className="w-full border border-gray-300 rounded px-3 py-2"
+                min="0"
+                defaultValue={formData.steals}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Blocks
+              </label>
+              <input
+                type="number"
+                name="blocks"
+                className="w-full border border-gray-300 rounded px-3 py-2"
+                min="0"
+                defaultValue={formData.blocks}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Turnovers
+              </label>
+              <input
+                type="number"
+                name="turnovers"
+                className="w-full border border-gray-300 rounded px-3 py-2"
+                min="0"
+                defaultValue={formData.turnovers}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Fouls
+              </label>
+              <input
+                type="number"
+                name="fouls"
+                className="w-full border border-gray-300 rounded px-3 py-2"
+                min="0"
+                defaultValue={formData.fouls}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                +/- Rating
+              </label>
+              <input
+                type="number"
+                name="plusMinus"
+                className="w-full border border-gray-300 rounded px-3 py-2"
+                defaultValue={formData.plusMinus}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Efficiency
+              </label>
+              <input
+                type="number"
+                name="efficiency"
+                className="w-full border border-gray-300 rounded px-3 py-2"
+                min="0"
+                defaultValue={formData.efficiency}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Points
+              </label>
+              <input
+                type="number"
+                name="points"
+                className="w-full border border-gray-300 rounded px-3 py-2"
+                min="0"
+                defaultValue={formData.points}
+              />
+            </div>
+          </div>
+
+          <div className="flex justify-end space-x-3 mt-6 pt-4 border-t">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-50"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={isPending}
+              className={`px-4 py-2 bg-green-600 text-white rounded shadow ${
+                isPending
+                  ? "opacity-70 cursor-not-allowed"
+                  : "hover:bg-green-700"
+              }`}
+            >
+              {isPending ? "Saving..." : "Save Changes"}
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );

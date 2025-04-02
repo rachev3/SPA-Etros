@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { useAuth } from "../../hooks/useAuth";
+import { useActionState } from "react";
 
 const LoginPage = () => {
-  const { login, loading, error } = useAuth();
+  const { login } = useAuth();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
@@ -11,7 +12,27 @@ const LoginPage = () => {
     rememberMe: false,
   });
   const [showPassword, setShowPassword] = useState(false);
-  const [loginError, setLoginError] = useState(null);
+
+  const [loginError, submitAction, isPending] = useActionState(
+    async (prevState, formData) => {
+      try {
+        const email = formData.get("email");
+        const password = formData.get("password");
+
+        await login({
+          email,
+          password,
+        });
+
+        navigate("/");
+        return null;
+      } catch (err) {
+        console.error("Login failed:", err);
+        return err.message || "Invalid email or password. Please try again.";
+      }
+    },
+    null
+  );
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -23,25 +44,6 @@ const LoginPage = () => {
 
   const toggleShowPassword = () => {
     setShowPassword(!showPassword);
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoginError(null);
-
-    try {
-      await login({
-        email: formData.email,
-        password: formData.password,
-      });
-
-      navigate("/");
-    } catch (err) {
-      console.error("Login failed:", err);
-      setLoginError(
-        err.message || "Invalid email or password. Please try again."
-      );
-    }
   };
 
   return (
@@ -61,15 +63,13 @@ const LoginPage = () => {
           </div>
 
           <div className="p-6">
-            {(loginError || error) && (
+            {loginError && (
               <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
-                {loginError ||
-                  (error && error.message) ||
-                  "An error occurred during login."}
+                {loginError}
               </div>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form action={submitAction} className="space-y-6">
               <div>
                 <label
                   htmlFor="email"
@@ -152,12 +152,12 @@ const LoginPage = () => {
               <div>
                 <button
                   type="submit"
-                  disabled={loading}
+                  disabled={isPending}
                   className={`w-full py-3 px-4 bg-black hover:bg-gray-900 text-white font-bold rounded-md shadow-sm transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 ${
-                    loading ? "opacity-70 cursor-not-allowed" : ""
+                    isPending ? "opacity-70 cursor-not-allowed" : ""
                   }`}
                 >
-                  {loading ? "Signing In..." : "Sign In"}
+                  {isPending ? "Signing In..." : "Sign In"}
                 </button>
               </div>
 

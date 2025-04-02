@@ -3,7 +3,7 @@ import { Link } from "react-router";
 import React from "react";
 import LatestNews from "./LatestNews";
 import UpcomingMatches from "./UpcomingMatches";
-import TeamHighlights from "./TeamHighlights";
+import TeamVideos from "./TeamVideos";
 import Sponsors from "./Sponsors";
 
 const HomePage = () => {
@@ -12,8 +12,7 @@ const HomePage = () => {
       <section
         className="relative h-[600px] bg-cover bg-center"
         style={{
-          backgroundImage:
-            "url('https://placehold.co/1600x900/111/333?text=ETROS+BASKETBALL')",
+          backgroundImage: "url('/main.jpg')",
         }}
       >
         <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
@@ -33,7 +32,7 @@ const HomePage = () => {
 
       <LatestNews />
 
-      <TeamHighlights />
+      <TeamVideos />
 
       <UpcomingMatches />
 

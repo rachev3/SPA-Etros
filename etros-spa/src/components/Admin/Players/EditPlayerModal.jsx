@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useUpdatePlayer } from "../../../api/playerApi";
+import { useActionState } from "react";
 
 const EditPlayerModal = ({ player, onClose, onPlayerUpdated }) => {
   const { update } = useUpdatePlayer();
@@ -21,16 +22,33 @@ const EditPlayerModal = ({ player, onClose, onPlayerUpdated }) => {
     { value: "Center", label: "Center" },
   ];
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const updatedPlayer = await update(player._id, formData);
-      onPlayerUpdated(updatedPlayer);
-      onClose();
-    } catch (error) {
-      console.error("Failed to update player:", error);
+  const [error, submitAction, isPending] = useActionState(
+    async (_, formData) => {
+      try {
+        const formDataObj = {
+          name: formData.get("name"),
+          number: formData.get("number"),
+          position: [formData.get("position")],
+          bornYear: parseInt(formData.get("bornYear")),
+          height: formData.get("height")
+            ? parseInt(formData.get("height"))
+            : "",
+          weight: formData.get("weight")
+            ? parseInt(formData.get("weight"))
+            : "",
+          imageUrl: formData.get("imageUrl") || "",
+        };
+
+        const updatedPlayer = await update(player._id, formDataObj);
+        onPlayerUpdated(updatedPlayer);
+        onClose();
+        return null;
+      } catch (error) {
+        console.error("Failed to update player:", error);
+        return error.message || "Failed to update player";
+      }
     }
-  };
+  );
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -69,7 +87,12 @@ const EditPlayerModal = ({ player, onClose, onPlayerUpdated }) => {
             </svg>
           </button>
         </div>
-        <form onSubmit={handleSubmit} className="p-4 space-y-4">
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-2 m-4 rounded-lg">
+            {error}
+          </div>
+        )}
+        <form action={submitAction} className="p-4 space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -80,8 +103,7 @@ const EditPlayerModal = ({ player, onClose, onPlayerUpdated }) => {
                 name="name"
                 required
                 className="w-full border border-gray-300 rounded-lg px-3 py-2"
-                value={formData.name}
-                onChange={handleChange}
+                defaultValue={formData.name}
               />
             </div>
             <div>
@@ -93,8 +115,7 @@ const EditPlayerModal = ({ player, onClose, onPlayerUpdated }) => {
                 name="number"
                 required
                 className="w-full border border-gray-300 rounded-lg px-3 py-2"
-                value={formData.number}
-                onChange={handleChange}
+                defaultValue={formData.number}
               />
             </div>
           </div>
@@ -102,41 +123,19 @@ const EditPlayerModal = ({ player, onClose, onPlayerUpdated }) => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Position(s)
+                Position
               </label>
-              <div className="border border-gray-300 rounded-lg p-3 bg-white">
+              <select
+                name="position"
+                className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                defaultValue={formData.position[0]}
+              >
                 {POSITIONS.map((pos) => (
-                  <div
-                    key={pos.value}
-                    className="flex items-center mb-2 last:mb-0"
-                  >
-                    <input
-                      type="checkbox"
-                      id={`pos-${pos.value}`}
-                      value={pos.value}
-                      checked={formData.position.includes(pos.value)}
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        const isChecked = e.target.checked;
-
-                        setFormData((prev) => ({
-                          ...prev,
-                          position: isChecked
-                            ? [...prev.position, value]
-                            : prev.position.filter((p) => p !== value),
-                        }));
-                      }}
-                      className="h-4 w-4 text-yellow-500 focus:ring-yellow-400 rounded"
-                    />
-                    <label
-                      htmlFor={`pos-${pos.value}`}
-                      className="ml-2 text-sm text-gray-700"
-                    >
-                      {pos.label}
-                    </label>
-                  </div>
+                  <option key={pos.value} value={pos.value}>
+                    {pos.label}
+                  </option>
                 ))}
-              </div>
+              </select>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -147,8 +146,7 @@ const EditPlayerModal = ({ player, onClose, onPlayerUpdated }) => {
                 name="bornYear"
                 required
                 className="w-full border border-gray-300 rounded-lg px-3 py-2"
-                value={formData.bornYear}
-                onChange={handleChange}
+                defaultValue={formData.bornYear}
               />
             </div>
           </div>
@@ -163,8 +161,7 @@ const EditPlayerModal = ({ player, onClose, onPlayerUpdated }) => {
                 name="height"
                 placeholder="185"
                 className="w-full border border-gray-300 rounded-lg px-3 py-2"
-                value={formData.height}
-                onChange={handleChange}
+                defaultValue={formData.height}
               />
             </div>
             <div>
@@ -178,8 +175,7 @@ const EditPlayerModal = ({ player, onClose, onPlayerUpdated }) => {
                 min="40"
                 max="180"
                 className="w-full border border-gray-300 rounded-lg px-3 py-2"
-                value={formData.weight}
-                onChange={handleChange}
+                defaultValue={formData.weight}
               />
             </div>
           </div>
@@ -192,24 +188,29 @@ const EditPlayerModal = ({ player, onClose, onPlayerUpdated }) => {
               type="text"
               name="imageUrl"
               className="w-full border border-gray-300 rounded-lg px-3 py-2"
-              value={formData.imageUrl}
-              onChange={handleChange}
+              placeholder="https://example.com/player-image.jpg"
+              defaultValue={formData.imageUrl}
             />
           </div>
 
-          <div className="flex justify-end space-x-3 pt-4">
+          <div className="flex justify-end space-x-2 pt-4 border-t">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 border border-gray-300 rounded-lg text-sm"
+              className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-yellow-500 text-black rounded-lg text-sm"
+              disabled={isPending}
+              className={`px-4 py-2 bg-green-600 text-white rounded-lg ${
+                isPending
+                  ? "opacity-70 cursor-not-allowed"
+                  : "hover:bg-green-700"
+              }`}
             >
-              Update Player
+              {isPending ? "Saving..." : "Save Changes"}
             </button>
           </div>
         </form>

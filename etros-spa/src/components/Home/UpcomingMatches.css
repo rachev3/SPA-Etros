@@ -1,0 +1,123 @@
+.upcoming-matches-section {
+  background: linear-gradient(to bottom, #f8f9fa, #ffffff);
+}
+
+.upcoming-matches-title {
+  position: relative;
+  color: #1a1a1a;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.upcoming-matches-divider {
+  transition: width 0.3s ease;
+}
+
+.upcoming-matches-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.upcoming-matches-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.match-item {
+  padding: 1.5rem;
+  border-bottom: 1px solid #edf2f7;
+  transition: background-color 0.2s ease;
+}
+
+.match-item:last-child {
+  border-bottom: none;
+}
+
+.match-item:hover {
+  background-color: #f8f9fa;
+}
+
+.match-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #2d3748;
+  margin-bottom: 0.5rem;
+}
+
+.match-details {
+  color: #718096;
+  font-size: 0.95rem;
+}
+
+.match-location {
+  display: flex;
+  align-items: center;
+  color: #718096;
+  font-size: 0.95rem;
+  margin-top: 0.25rem;
+}
+
+.match-location::before {
+  content: "📍";
+  margin-right: 0.5rem;
+}
+
+.view-schedule-button {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.view-schedule-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.view-schedule-button::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 120%;
+  height: 120%;
+  background: rgba(255, 255, 255, 0.1);
+  transform: translate(-50%, -50%) scale(0);
+  border-radius: 50%;
+  transition: transform 0.5s ease;
+}
+
+.view-schedule-button:hover::after {
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+}
+
+.error-message {
+  color: #e53e3e;
+  text-align: center;
+  padding: 2rem;
+  background-color: #fff5f5;
+  border-radius: 8px;
+}
+
+@media (max-width: 640px) {
+  .match-item {
+    padding: 1rem;
+  }
+
+  .match-title {
+    font-size: 1.1rem;
+  }
+
+  .match-details,
+  .match-location {
+    font-size: 0.9rem;
+  }
+}

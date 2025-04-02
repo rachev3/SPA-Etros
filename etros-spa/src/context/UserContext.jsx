@@ -12,7 +12,7 @@ export const UserProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const loadUser = () => {
+    const loadUser = async () => {
       if (checkIsAuthenticated()) {
         const userData = getCurrentUser();
         setUser(userData);
@@ -44,9 +44,5 @@ export const UserProvider = ({ children }) => {
     isAuthenticated: checkIsAuthenticated(),
   };
 
-  return (
-    <UserContext.Provider value={value}>
-      {!loading && children}
-    </UserContext.Provider>
-  );
+  return <UserContext value={value}>{!loading && children}</UserContext>;
 };
