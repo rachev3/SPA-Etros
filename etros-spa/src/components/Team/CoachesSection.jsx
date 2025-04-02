@@ -4,10 +4,10 @@ const CoachesSection = () => {
   const coaches = [
     {
       id: 1,
-      name: "James Peterson",
+      name: "Ivan Balakov",
       role: "Head Coach",
-      image: "https://placehold.co/300x400/111/333?text=Coach",
-      bio: "Coach Peterson brings 15 years of coaching experience and has led teams to multiple championships.",
+      image: "/coach.jpg",
+      bio: "Coach Balakov is a former basketball player and now a coach with a passion for developing players.",
     },
   ];
 
@@ -26,7 +26,7 @@ const CoachesSection = () => {
               <img
                 src={coach.image}
                 alt={coach.name}
-                className="w-full h-64 object-cover"
+                className="w-full h-90 object-cover"
               />
               <div className="p-6">
                 <h3 className="text-xl font-bold text-yellow-400">

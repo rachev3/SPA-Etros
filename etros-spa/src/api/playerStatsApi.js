@@ -2,6 +2,39 @@ import { useState, useEffect, useCallback } from "react";
 import apiClient from "./axiosConfig/axios";
 import { API_ENDPOINTS } from "./axiosConfig/config";
 
+const validateShotAttempts = (data) => {
+  const validations = [
+    {
+      made: data.fieldGoalsMade,
+      attempted: data.fieldGoalsAttempted,
+      field: "Field Goals",
+    },
+    {
+      made: data.twoPointsMade,
+      attempted: data.twoPointsAttempted,
+      field: "Two Points",
+    },
+    {
+      made: data.threePointsMade,
+      attempted: data.threePointsAttempted,
+      field: "Three Points",
+    },
+    {
+      made: data.freeThrowsMade,
+      attempted: data.freeThrowsAttempted,
+      field: "Free Throws",
+    },
+  ];
+
+  for (const validation of validations) {
+    if (validation.made > validation.attempted) {
+      throw new Error(
+        `${validation.field} made (${validation.made}) cannot be greater than attempted (${validation.attempted})`
+      );
+    }
+  }
+};
+
 export const usePlayerStats = () => {
   const [playerStats, setPlayerStats] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -78,8 +111,14 @@ export const usePlayerStatsByMatchId = (matchId) => {
       setPlayerStats(response.data.data);
       setError(null);
     } catch (err) {
-      setError(err.message || "Failed to fetch playerStats");
-      setPlayerStats(null);
+      // If it's a 404, it just means no stats exist yet - not an error
+      if (err.response && err.response.status === 404) {
+        setPlayerStats([]);
+        setError(null);
+      } else {
+        setError(err.message || "Failed to fetch playerStats");
+        setPlayerStats(null);
+      }
     } finally {
       setLoading(false);
     }
@@ -91,9 +130,13 @@ export const usePlayerStatsByMatchId = (matchId) => {
 
   return { playerStats, loading, error, refetch: fetchPlayerStats };
 };
+
 export const useCreatePlayerStats = () => {
   const create = async (playerStatsData) => {
     try {
+      // Validate shot attempts before making the API call
+      validateShotAttempts(playerStatsData);
+
       const response = await apiClient.post(
         API_ENDPOINTS.playerStats.create,
         playerStatsData
@@ -101,6 +144,7 @@ export const useCreatePlayerStats = () => {
       return response.data.data;
     } catch (error) {
       console.error("Error in createPlayerStats:", error);
+      throw error; // Re-throw the error to be handled by the component
     }
   };
 
@@ -109,12 +153,23 @@ export const useCreatePlayerStats = () => {
 
 export const useUpdatePlayerStats = () => {
   const update = async (playerStatsId, playerStatsData) => {
-    const url = API_ENDPOINTS.playerStats.update.replace(":id", playerStatsId);
-    const response = await apiClient.put(url, {
-      ...playerStatsData,
-      _id: playerStatsId,
-    });
-    return response.data.data;
+    try {
+      // Validate shot attempts before making the API call
+      validateShotAttempts(playerStatsData);
+
+      const url = API_ENDPOINTS.playerStats.update.replace(
+        ":id",
+        playerStatsId
+      );
+      const response = await apiClient.put(url, {
+        ...playerStatsData,
+        _id: playerStatsId,
+      });
+      return response.data.data;
+    } catch (error) {
+      console.error("Error in updatePlayerStats:", error);
+      throw error; // Re-throw the error to be handled by the component
+    }
   };
 
   return { update };

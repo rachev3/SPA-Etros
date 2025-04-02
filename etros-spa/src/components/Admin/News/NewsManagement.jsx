@@ -3,6 +3,7 @@ import { useArticles, useDeleteArticle } from "../../../api/articleApi";
 import AddArticleModal from "./AddArticleModal";
 import EditArticleModal from "./EditArticleModal";
 import NewsListItem from "./NewsListItem";
+import LoadingSpinner from "../../shared/LoadingSpinner";
 
 const NewsManagement = () => {
   const { articles, loading, error, refetch } = useArticles();
@@ -32,11 +33,7 @@ const NewsManagement = () => {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex justify-center items-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-500"></div>
-      </div>
-    );
+    return <LoadingSpinner size="large" />;
   }
 
   return (

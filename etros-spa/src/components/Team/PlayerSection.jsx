@@ -1,16 +1,13 @@
 import React from "react";
 import { usePlayers } from "../../api/playerApi";
 import PlayerCard from "./PlayerCard";
+import LoadingSpinner from "../shared/LoadingSpinner";
 
 const PlayersSection = () => {
   const { players, loading, error } = usePlayers();
 
   if (loading) {
-    return (
-      <div className="min-h-[300px] flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-yellow-400"></div>
-      </div>
-    );
+    return <LoadingSpinner containerHeight="h-96" />;
   }
 
   if (error) {

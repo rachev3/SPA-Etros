@@ -8,34 +8,28 @@ const VenueInfo = () => (
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div className="rounded-lg overflow-hidden shadow-lg">
-          <img
-            src="https://placehold.co/800x500/111/333?text=Etros+Arena"
-            alt="Etros Arena"
-            className="w-full h-auto"
-          />
+          <img src="/gym.jpg" alt="Etros Arena" className="w-full h-auto" />
         </div>
         <div className="flex flex-col justify-center">
-          <h3 className="text-2xl font-bold mb-4">Etros Arena</h3>
+          <h3 className="text-2xl font-bold mb-4">Sport Complex "Ivaylo"</h3>
           <p className="text-gray-700 mb-4">
-            Experience the excitement of Etros Basketball at our
-            state-of-the-art arena located in the heart of the city.
-          </p>
-          <p className="text-gray-700 mb-4">
-            Our 18,000-seat venue offers excellent sightlines, premium food
-            options, and an electric atmosphere.
+            Currently located in the city of Veliko Tarnovo, Bulgaria. Using
+            Etar's gym for practices and home games.
           </p>
           <div className="bg-gray-100 p-6 rounded-lg">
-            <h4 className="font-bold text-lg mb-2">Location & Parking</h4>
+            <h4 className="font-bold text-lg mb-2">Location</h4>
             <p className="text-gray-700 mb-2">
-              123 Main Street, Veliko Tarnovo, Bulgaria
+              str. "Filip Totyu" 5-3, Veliko Tarnovo, Bulgaria
             </p>
-            <p className="text-gray-700 mb-4">
-              Convenient parking available in adjacent garages and lots.
-            </p>
-            <button className="bg-black hover:bg-gray-900 text-white py-2 px-4 rounded transition-colors duration-200 text-sm flex items-center mt-2">
-              📍 Get Directions
-            </button>
           </div>
+          <a
+            href="https://maps.app.goo.gl/NZvdArCgV4NvJDDWA"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block bg-yellow-500 hover:bg-yellow-400 text-black font-bold py-3 px-6 rounded transition-colors duration-200 shadow-lg"
+          >
+            Directions
+          </a>
         </div>
       </div>
     </div>

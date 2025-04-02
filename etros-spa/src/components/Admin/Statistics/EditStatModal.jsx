@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useUpdatePlayerStats } from "../../../api/playerStatsApi";
 import { usePlayers } from "../../../api/playerApi";
 import { useActionState } from "react";
@@ -6,12 +6,12 @@ import { useActionState } from "react";
 const EditStatModal = ({ stat, isOpen, onClose, onSuccess }) => {
   const { update: updatePlayerStats } = useUpdatePlayerStats();
   const { players } = usePlayers();
+  const [error, setError] = useState(null);
 
-  // Initialize form data with correct field names and defaults based on model
   const [formData, setFormData] = useState({
     playerId: stat.player?._id || "",
     fieldGoalsMade: stat.fieldGoalsMade || 0,
-    fieldGoalsAttempted: stat.fieldGoalsAttempted || 0, // Fixed typo from fieldgoalsAttempted
+    fieldGoalsAttempted: stat.fieldGoalsAttempted || 0,
     twoPointsMade: stat.twoPointsMade || 0,
     twoPointsAttempted: stat.twoPointsAttempted || 0,
     threePointsMade: stat.threePointsMade || 0,
@@ -34,49 +34,24 @@ const EditStatModal = ({ stat, isOpen, onClose, onSuccess }) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
-      [name]: name === "playerId" ? value : parseInt(value) || 0,
+      [name]: parseInt(value) || 0,
     });
+    // Clear error when user makes changes
+    setError(null);
   };
 
-  const [error, submitAction, isPending] = useActionState(
-    async (_, formData) => {
-      try {
-        // Extract form data fields
-        const updatedStats = {
-          playerId: formData.get("playerId"),
-          fieldGoalsMade: parseInt(formData.get("fieldGoalsMade")) || 0,
-          fieldGoalsAttempted:
-            parseInt(formData.get("fieldGoalsAttempted")) || 0,
-          twoPointsMade: parseInt(formData.get("twoPointsMade")) || 0,
-          twoPointsAttempted: parseInt(formData.get("twoPointsAttempted")) || 0,
-          threePointsMade: parseInt(formData.get("threePointsMade")) || 0,
-          threePointsAttempted:
-            parseInt(formData.get("threePointsAttempted")) || 0,
-          freeThrowsMade: parseInt(formData.get("freeThrowsMade")) || 0,
-          freeThrowsAttempted:
-            parseInt(formData.get("freeThrowsAttempted")) || 0,
-          offensiveRebounds: parseInt(formData.get("offensiveRebounds")) || 0,
-          defensiveRebounds: parseInt(formData.get("defensiveRebounds")) || 0,
-          assists: parseInt(formData.get("assists")) || 0,
-          steals: parseInt(formData.get("steals")) || 0,
-          blocks: parseInt(formData.get("blocks")) || 0,
-          turnovers: parseInt(formData.get("turnovers")) || 0,
-          fouls: parseInt(formData.get("fouls")) || 0,
-          plusMinus: parseInt(formData.get("plusMinus")) || 0,
-          efficiency: parseInt(formData.get("efficiency")) || 0,
-          points: parseInt(formData.get("points")) || 0,
-        };
-
-        await updatePlayerStats(stat._id, updatedStats);
-        onSuccess(stat.matchId);
-        onClose();
-        return null;
-      } catch (error) {
-        console.error("Error updating stat:", error);
-        return "Failed to update statistic";
-      }
+  const [submitAction, isPending] = useActionState(async (_, formData) => {
+    try {
+      await updatePlayerStats(stat._id, formData);
+      onSuccess(stat.matchId);
+      onClose();
+      return null;
+    } catch (error) {
+      console.error("Error updating stat:", error);
+      setError(error.message || "Failed to update statistic");
+      return "Failed to update statistic";
     }
-  );
+  });
 
   if (!isOpen) return null;
 
@@ -140,7 +115,9 @@ const EditStatModal = ({ stat, isOpen, onClose, onSuccess }) => {
                 name="fieldGoalsMade"
                 className="w-full border border-gray-300 rounded px-3 py-2"
                 min="0"
+                max={formData.fieldGoalsAttempted}
                 defaultValue={formData.fieldGoalsMade}
+                onChange={handleChange}
               />
             </div>
 
@@ -152,8 +129,9 @@ const EditStatModal = ({ stat, isOpen, onClose, onSuccess }) => {
                 type="number"
                 name="fieldGoalsAttempted"
                 className="w-full border border-gray-300 rounded px-3 py-2"
-                min="0"
+                min={formData.fieldGoalsMade}
                 defaultValue={formData.fieldGoalsAttempted}
+                onChange={handleChange}
               />
             </div>
 
@@ -166,7 +144,9 @@ const EditStatModal = ({ stat, isOpen, onClose, onSuccess }) => {
                 name="twoPointsMade"
                 className="w-full border border-gray-300 rounded px-3 py-2"
                 min="0"
+                max={formData.twoPointsAttempted}
                 defaultValue={formData.twoPointsMade}
+                onChange={handleChange}
               />
             </div>
 
@@ -178,8 +158,9 @@ const EditStatModal = ({ stat, isOpen, onClose, onSuccess }) => {
                 type="number"
                 name="twoPointsAttempted"
                 className="w-full border border-gray-300 rounded px-3 py-2"
-                min="0"
+                min={formData.twoPointsMade}
                 defaultValue={formData.twoPointsAttempted}
+                onChange={handleChange}
               />
             </div>
 
@@ -192,7 +173,9 @@ const EditStatModal = ({ stat, isOpen, onClose, onSuccess }) => {
                 name="threePointsMade"
                 className="w-full border border-gray-300 rounded px-3 py-2"
                 min="0"
+                max={formData.threePointsAttempted}
                 defaultValue={formData.threePointsMade}
+                onChange={handleChange}
               />
             </div>
 
@@ -204,8 +187,9 @@ const EditStatModal = ({ stat, isOpen, onClose, onSuccess }) => {
                 type="number"
                 name="threePointsAttempted"
                 className="w-full border border-gray-300 rounded px-3 py-2"
-                min="0"
+                min={formData.threePointsMade}
                 defaultValue={formData.threePointsAttempted}
+                onChange={handleChange}
               />
             </div>
 
@@ -218,7 +202,9 @@ const EditStatModal = ({ stat, isOpen, onClose, onSuccess }) => {
                 name="freeThrowsMade"
                 className="w-full border border-gray-300 rounded px-3 py-2"
                 min="0"
+                max={formData.freeThrowsAttempted}
                 defaultValue={formData.freeThrowsMade}
+                onChange={handleChange}
               />
             </div>
 
@@ -230,8 +216,9 @@ const EditStatModal = ({ stat, isOpen, onClose, onSuccess }) => {
                 type="number"
                 name="freeThrowsAttempted"
                 className="w-full border border-gray-300 rounded px-3 py-2"
-                min="0"
+                min={formData.freeThrowsMade}
                 defaultValue={formData.freeThrowsAttempted}
+                onChange={handleChange}
               />
             </div>
 
@@ -245,6 +232,7 @@ const EditStatModal = ({ stat, isOpen, onClose, onSuccess }) => {
                 className="w-full border border-gray-300 rounded px-3 py-2"
                 min="0"
                 defaultValue={formData.offensiveRebounds}
+                onChange={handleChange}
               />
             </div>
 
@@ -258,6 +246,7 @@ const EditStatModal = ({ stat, isOpen, onClose, onSuccess }) => {
                 className="w-full border border-gray-300 rounded px-3 py-2"
                 min="0"
                 defaultValue={formData.defensiveRebounds}
+                onChange={handleChange}
               />
             </div>
 
@@ -271,6 +260,7 @@ const EditStatModal = ({ stat, isOpen, onClose, onSuccess }) => {
                 className="w-full border border-gray-300 rounded px-3 py-2"
                 min="0"
                 defaultValue={formData.assists}
+                onChange={handleChange}
               />
             </div>
 
@@ -284,6 +274,7 @@ const EditStatModal = ({ stat, isOpen, onClose, onSuccess }) => {
                 className="w-full border border-gray-300 rounded px-3 py-2"
                 min="0"
                 defaultValue={formData.steals}
+                onChange={handleChange}
               />
             </div>
 
@@ -297,6 +288,7 @@ const EditStatModal = ({ stat, isOpen, onClose, onSuccess }) => {
                 className="w-full border border-gray-300 rounded px-3 py-2"
                 min="0"
                 defaultValue={formData.blocks}
+                onChange={handleChange}
               />
             </div>
 
@@ -310,6 +302,7 @@ const EditStatModal = ({ stat, isOpen, onClose, onSuccess }) => {
                 className="w-full border border-gray-300 rounded px-3 py-2"
                 min="0"
                 defaultValue={formData.turnovers}
+                onChange={handleChange}
               />
             </div>
 
@@ -323,6 +316,7 @@ const EditStatModal = ({ stat, isOpen, onClose, onSuccess }) => {
                 className="w-full border border-gray-300 rounded px-3 py-2"
                 min="0"
                 defaultValue={formData.fouls}
+                onChange={handleChange}
               />
             </div>
 
@@ -335,6 +329,7 @@ const EditStatModal = ({ stat, isOpen, onClose, onSuccess }) => {
                 name="plusMinus"
                 className="w-full border border-gray-300 rounded px-3 py-2"
                 defaultValue={formData.plusMinus}
+                onChange={handleChange}
               />
             </div>
 
@@ -348,6 +343,7 @@ const EditStatModal = ({ stat, isOpen, onClose, onSuccess }) => {
                 className="w-full border border-gray-300 rounded px-3 py-2"
                 min="0"
                 defaultValue={formData.efficiency}
+                onChange={handleChange}
               />
             </div>
 
@@ -361,6 +357,7 @@ const EditStatModal = ({ stat, isOpen, onClose, onSuccess }) => {
                 className="w-full border border-gray-300 rounded px-3 py-2"
                 min="0"
                 defaultValue={formData.points}
+                onChange={handleChange}
               />
             </div>
           </div>

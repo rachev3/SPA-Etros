@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router";
 import { useArticles } from "../../api/articleApi";
 import { formatLongDate } from "../../utils/dateUtils";
+import LoadingSpinner from "../shared/LoadingSpinner";
 
 const ArticleGridSection = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -19,9 +20,9 @@ const ArticleGridSection = () => {
 
   if (loading) {
     return (
-      <section className="py-16 flex justify-center">
-        <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-yellow-400"></div>
-      </section>
+      <div className="min-h-[400px]">
+        <LoadingSpinner containerHeight="h-[400px]" />
+      </div>
     );
   }
 

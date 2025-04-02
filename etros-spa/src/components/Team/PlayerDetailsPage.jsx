@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useParams, Link } from "react-router";
 import { usePlayer } from "../../api/playerApi";
+import LoadingSpinner from "../shared/LoadingSpinner";
 
 const PlayerDetailsPage = () => {
   const { id } = useParams();
@@ -12,11 +13,7 @@ const PlayerDetailsPage = () => {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-yellow-400"></div>
-      </div>
-    );
+    return <LoadingSpinner size="large" />;
   }
 
   if (error) {

@@ -5,6 +5,7 @@ import { usePlayers } from "../../../api/playerApi";
 const AddStatModal = ({ matchId, onClose, onSuccess }) => {
   const { create: createPlayerStats } = useCreatePlayerStats();
   const { players } = usePlayers();
+  const [error, setError] = useState(null);
   const [formData, setFormData] = useState({
     matchId,
     playerId: "",
@@ -34,12 +35,14 @@ const AddStatModal = ({ matchId, onClose, onSuccess }) => {
       ...formData,
       [name]: name === "playerId" ? value : parseInt(value) || 0,
     });
+    // Clear error when user makes changes
+    setError(null);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.playerId) {
-      alert("Please select a player");
+      setError("Please select a player");
       return;
     }
 
@@ -49,7 +52,7 @@ const AddStatModal = ({ matchId, onClose, onSuccess }) => {
       onClose();
     } catch (error) {
       console.error("Error saving stat:", error);
-      alert("Failed to save statistic");
+      setError(error.message || "Failed to save statistic");
     }
   };
 
@@ -81,6 +84,12 @@ const AddStatModal = ({ matchId, onClose, onSuccess }) => {
               </svg>
             </button>
           </div>
+
+          {error && (
+            <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+              {error}
+            </div>
+          )}
 
           <form onSubmit={handleSubmit}>
             <div className="mb-6">
@@ -114,6 +123,7 @@ const AddStatModal = ({ matchId, onClose, onSuccess }) => {
                   value={formData.fieldGoalsMade}
                   onChange={handleChange}
                   min="0"
+                  max={formData.fieldGoalsAttempted}
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
                 />
               </div>
@@ -126,7 +136,7 @@ const AddStatModal = ({ matchId, onClose, onSuccess }) => {
                   name="fieldGoalsAttempted"
                   value={formData.fieldGoalsAttempted}
                   onChange={handleChange}
-                  min="0"
+                  min={formData.fieldGoalsMade}
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
                 />
               </div>
@@ -143,6 +153,7 @@ const AddStatModal = ({ matchId, onClose, onSuccess }) => {
                   value={formData.twoPointsMade}
                   onChange={handleChange}
                   min="0"
+                  max={formData.twoPointsAttempted}
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
                 />
               </div>
@@ -155,7 +166,7 @@ const AddStatModal = ({ matchId, onClose, onSuccess }) => {
                   name="twoPointsAttempted"
                   value={formData.twoPointsAttempted}
                   onChange={handleChange}
-                  min="0"
+                  min={formData.twoPointsMade}
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
                 />
               </div>
@@ -172,6 +183,7 @@ const AddStatModal = ({ matchId, onClose, onSuccess }) => {
                   value={formData.threePointsMade}
                   onChange={handleChange}
                   min="0"
+                  max={formData.threePointsAttempted}
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
                 />
               </div>
@@ -184,7 +196,7 @@ const AddStatModal = ({ matchId, onClose, onSuccess }) => {
                   name="threePointsAttempted"
                   value={formData.threePointsAttempted}
                   onChange={handleChange}
-                  min="0"
+                  min={formData.threePointsMade}
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
                 />
               </div>
@@ -201,6 +213,7 @@ const AddStatModal = ({ matchId, onClose, onSuccess }) => {
                   value={formData.freeThrowsMade}
                   onChange={handleChange}
                   min="0"
+                  max={formData.freeThrowsAttempted}
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
                 />
               </div>
@@ -213,7 +226,7 @@ const AddStatModal = ({ matchId, onClose, onSuccess }) => {
                   name="freeThrowsAttempted"
                   value={formData.freeThrowsAttempted}
                   onChange={handleChange}
-                  min="0"
+                  min={formData.freeThrowsMade}
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
                 />
               </div>

@@ -13,18 +13,6 @@ const ArticleDetails = ({ article }) => {
           </p>
         </div>
       </div>
-      {article.metaKeywords && article.metaKeywords.length > 0 && (
-        <div className="flex flex-wrap gap-2">
-          {article.metaKeywords.map((keyword, index) => (
-            <span
-              key={index}
-              className="bg-gray-200 text-gray-800 text-xs px-3 py-1 rounded-full"
-            >
-              #{keyword}
-            </span>
-          ))}
-        </div>
-      )}
     </div>
   );
 };

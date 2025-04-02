@@ -24,13 +24,15 @@ const CreateMatchModal = ({ isOpen, onClose, onSuccess }) => {
       freeThrowsAttempted: 0,
       offensiveRebounds: 0,
       defensiveRebounds: 0,
-      totalAssists: 0,
-      totalSteals: 0,
-      totalBlocks: 0,
-      totalTurnovers: 0,
-      totalFouls: 0,
-      totalPoints: 0,
+      totalRebounds: 0,
+      assists: 0,
+      steals: 0,
+      blocks: 0,
+      turnovers: 0,
+      fouls: 0,
+      points: 0,
     },
+    playerStats: [],
   });
 
   const handleSubmit = async (e) => {
@@ -60,13 +62,15 @@ const CreateMatchModal = ({ isOpen, onClose, onSuccess }) => {
           freeThrowsAttempted: 0,
           offensiveRebounds: 0,
           defensiveRebounds: 0,
-          totalAssists: 0,
-          totalSteals: 0,
-          totalBlocks: 0,
-          totalTurnovers: 0,
-          totalFouls: 0,
-          totalPoints: 0,
+          totalRebounds: 0,
+          assists: 0,
+          steals: 0,
+          blocks: 0,
+          turnovers: 0,
+          fouls: 0,
+          points: 0,
         },
+        playerStats: [],
       });
     } catch (err) {
       setError(err.message || "Failed to create match");

@@ -3,6 +3,7 @@ import { usePlayers, useDeletePlayer } from "../../../api/playerApi";
 import CreatePlayerModal from "./CreatePlayerModal";
 import EditPlayerModal from "./EditPlayerModal";
 import PlayerListItem from "./PlayerListItem";
+import LoadingSpinner from "../../shared/LoadingSpinner";
 
 const PlayersManagement = () => {
   const { players, loading, error, refetch } = usePlayers();
@@ -28,11 +29,7 @@ const PlayersManagement = () => {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-yellow-400"></div>
-      </div>
-    );
+    return <LoadingSpinner size="large" />;
   }
 
   if (error) {

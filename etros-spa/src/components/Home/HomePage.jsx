@@ -10,7 +10,7 @@ const HomePage = () => {
   return (
     <>
       <section
-        className="relative h-[600px] bg-cover bg-center"
+        className="relative h-[600px] md:h-[700px] bg-cover bg-center bg-no-repeat mt-[-1px]"
         style={{
           backgroundImage: "url('/main.jpg')",
         }}
@@ -23,9 +23,12 @@ const HomePage = () => {
             <p className="text-xl mb-8 tracking-wider text-gray-200">
               Where Legends Are Made
             </p>
-            <button className="bg-yellow-500 hover:bg-yellow-400 text-black font-bold py-3 px-8 rounded transition-colors duration-200 shadow-lg">
-              <Link to="/schedule">View Schedule</Link>
-            </button>
+            <Link
+              to="/schedule"
+              className="inline-block bg-yellow-500 hover:bg-yellow-400 text-black font-bold py-3 px-8 rounded transition-colors duration-200 shadow-lg"
+            >
+              View Schedule
+            </Link>
           </div>
         </div>
       </section>

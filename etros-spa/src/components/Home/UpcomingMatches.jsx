@@ -2,6 +2,7 @@ import React, { useMemo } from "react";
 import { Link } from "react-router";
 import { useMatches } from "../../api/matchApi";
 import "./UpcomingMatches.css";
+import LoadingSpinner from "../shared/LoadingSpinner";
 
 const UpcomingMatches = () => {
   const filterMatch = useMemo(() => ({ status: "upcoming" }), []);
@@ -16,9 +17,7 @@ const UpcomingMatches = () => {
         <div className="upcoming-matches-divider w-20 h-1 bg-yellow-400 mx-auto mb-12"></div>
 
         {loading ? (
-          <div className="loading-spinner">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
-          </div>
+          <LoadingSpinner containerHeight="h-48" />
         ) : error ? (
           <div className="error-message">Failed to load upcoming matches.</div>
         ) : matches.length === 0 ? (

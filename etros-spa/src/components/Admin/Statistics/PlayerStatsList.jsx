@@ -4,6 +4,7 @@ import { usePlayerStatsByMatchId } from "../../../api/playerStatsApi";
 import AddStatModal from "./AddStatModal";
 import EditStatModal from "./EditStatModal";
 import { useDeletePlayerStats } from "../../../api/playerStatsApi";
+import LoadingSpinner from "../../shared/LoadingSpinner";
 
 const PlayerStatsList = ({ matchId, refreshTrigger }) => {
   const {
@@ -14,7 +15,9 @@ const PlayerStatsList = ({ matchId, refreshTrigger }) => {
   } = usePlayerStatsByMatchId(matchId);
 
   useEffect(() => {
-    refetchStats();
+    if (refreshTrigger > 0) {
+      refetchStats();
+    }
   }, [matchId, refreshTrigger, refetchStats]);
 
   const [editModalData, setEditModalData] = useState(null);
@@ -30,11 +33,7 @@ const PlayerStatsList = ({ matchId, refreshTrigger }) => {
   };
 
   if (statsLoading) {
-    return (
-      <div className="text-center py-4">
-        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-yellow-400 mx-auto"></div>
-      </div>
-    );
+    return <LoadingSpinner containerHeight="py-4" size="medium" />;
   }
 
   if (statsError) {
@@ -45,9 +44,11 @@ const PlayerStatsList = ({ matchId, refreshTrigger }) => {
     );
   }
 
+  const hasStats = stats && stats.length > 0;
+
   return (
     <div className="bg-white p-4 rounded-lg shadow-sm">
-      {stats && stats.length > 0 ? (
+      {hasStats ? (
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">

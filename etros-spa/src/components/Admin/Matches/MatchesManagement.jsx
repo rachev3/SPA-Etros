@@ -3,6 +3,7 @@ import CreateMatchModal from "./CreateMatchModal";
 import EditMatchModal from "./EditMatchModal";
 import { useMatches, useDeleteMatch } from "../../../api/matchApi";
 import MatchListItem from "./MatchListItem";
+import LoadingSpinner from "../../shared/LoadingSpinner";
 
 const MatchesManagement = () => {
   const { matches, loading, error, refetch } = useMatches();
@@ -42,11 +43,7 @@ const MatchesManagement = () => {
   };
 
   if (loading) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-500"></div>
-      </div>
-    );
+    return <LoadingSpinner />;
   }
 
   if (error) {

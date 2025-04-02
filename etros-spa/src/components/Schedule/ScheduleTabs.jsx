@@ -2,6 +2,7 @@ import React, { useState, useMemo } from "react";
 import { useMatches } from "../../api/matchApi";
 import MatchList from "./MatchList";
 import PaginationControls from "./PaginationControls";
+import LoadingSpinner from "../shared/LoadingSpinner";
 
 const ScheduleTabs = () => {
   const [activeTab, setActiveTab] = useState("upcoming");
@@ -65,12 +66,12 @@ const ScheduleTabs = () => {
           </div>
 
           {loading ? (
-            <div className="p-6 text-center text-gray-500">
-              Loading matches...
-            </div>
+            <LoadingSpinner containerHeight="h-40" />
           ) : error ? (
-            <div className="p-6 text-center text-red-500">
-              Failed to load matches
+            <p className="text-red-500 py-8 text-center">{error}</p>
+          ) : matches.length === 0 ? (
+            <div className="p-6 text-center text-gray-500">
+              No matches found
             </div>
           ) : (
             <>

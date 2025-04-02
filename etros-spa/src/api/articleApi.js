@@ -86,6 +86,7 @@ export const useArticle = (articleId) => {
 
 export const useCreateArticle = () => {
   const create = async (articleData) => {
+    console.log(articleData);
     try {
       const response = await apiClient.post(
         API_ENDPOINTS.articles.create,

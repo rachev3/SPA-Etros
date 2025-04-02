@@ -25,10 +25,19 @@ const EditPlayerModal = ({ player, onClose, onPlayerUpdated }) => {
   const [error, submitAction, isPending] = useActionState(
     async (_, formData) => {
       try {
+        // Get all selected positions from checkboxes
+        const selectedPositions = Array.from(
+          document.querySelectorAll('input[name="position"]:checked')
+        ).map((input) => input.value);
+
+        if (selectedPositions.length === 0) {
+          throw new Error("At least one position must be selected");
+        }
+
         const formDataObj = {
           name: formData.get("name"),
           number: formData.get("number"),
-          position: [formData.get("position")],
+          position: selectedPositions,
           bornYear: parseInt(formData.get("bornYear")),
           height: formData.get("height")
             ? parseInt(formData.get("height"))
@@ -51,12 +60,17 @@ const EditPlayerModal = ({ player, onClose, onPlayerUpdated }) => {
   );
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type, checked } = e.target;
+
     if (name === "position") {
-      setFormData((prev) => ({
-        ...prev,
-        [name]: [value],
-      }));
+      if (type === "checkbox") {
+        setFormData((prev) => ({
+          ...prev,
+          position: checked
+            ? [...prev.position, value]
+            : prev.position.filter((p) => p !== value),
+        }));
+      }
     } else {
       setFormData((prev) => ({
         ...prev,
@@ -123,19 +137,32 @@ const EditPlayerModal = ({ player, onClose, onPlayerUpdated }) => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Position
+                Position(s)
               </label>
-              <select
-                name="position"
-                className="w-full border border-gray-300 rounded-lg px-3 py-2"
-                defaultValue={formData.position[0]}
-              >
+              <div className="border border-gray-300 rounded-lg p-3 bg-white">
                 {POSITIONS.map((pos) => (
-                  <option key={pos.value} value={pos.value}>
-                    {pos.label}
-                  </option>
+                  <div
+                    key={pos.value}
+                    className="flex items-center mb-2 last:mb-0"
+                  >
+                    <input
+                      type="checkbox"
+                      id={`pos-${pos.value}`}
+                      name="position"
+                      value={pos.value}
+                      checked={formData.position.includes(pos.value)}
+                      onChange={handleChange}
+                      className="h-4 w-4 text-yellow-500 focus:ring-yellow-400 rounded"
+                    />
+                    <label
+                      htmlFor={`pos-${pos.value}`}
+                      className="ml-2 text-sm text-gray-700"
+                    >
+                      {pos.label}
+                    </label>
+                  </div>
                 ))}
-              </select>
+              </div>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -145,6 +172,8 @@ const EditPlayerModal = ({ player, onClose, onPlayerUpdated }) => {
                 type="number"
                 name="bornYear"
                 required
+                min="1950"
+                max={new Date().getFullYear() - 15}
                 className="w-full border border-gray-300 rounded-lg px-3 py-2"
                 defaultValue={formData.bornYear}
               />

@@ -4,29 +4,24 @@ import { formatLongDate } from "../../../utils/dateUtils";
 const ArticleHero = ({ article }) => {
   return (
     <div className="relative">
-      <div className="w-full h-[50vh] relative overflow-hidden">
+      <div className="w-full h-[400px] relative overflow-hidden">
         <img
           src={article.images?.[0] || "/placeholder-image.jpg"}
           alt={article.title}
-          className="w-full h-full object-cover"
+          className="absolute inset-0 w-full h-full object-cover object-center brightness-90"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent"></div>
       </div>
-      <div className="absolute bottom-0 left-0 right-0 p-8 text-white">
+      <div className="absolute inset-x-0 bottom-0 px-4 md:px-8 pb-8">
         <div className="max-w-4xl mx-auto">
-          <div className="mb-4 flex items-center">
-            <span className="text-gray-300 text-sm">
+          <div className="mb-3">
+            <span className="text-yellow-400 text-sm font-medium tracking-wide uppercase">
               {formatLongDate(article.createdAt)}
             </span>
           </div>
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-2">
+          <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-3 text-white drop-shadow-lg">
             {article.title}
           </h1>
-          {article.metaDescription && (
-            <p className="text-xl text-gray-200 mb-4">
-              {article.metaDescription}
-            </p>
-          )}
         </div>
       </div>
     </div>

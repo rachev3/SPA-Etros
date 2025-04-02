@@ -1,17 +1,14 @@
 import React from "react";
 import { useMatch } from "../../api/matchApi";
 import { useParams } from "react-router";
+import LoadingSpinner from "../shared/LoadingSpinner";
 
 const MatchDetails = () => {
   const { id } = useParams();
   const { match, loading, error } = useMatch(id, "playerStats.player");
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-yellow-400"></div>
-      </div>
-    );
+    return <LoadingSpinner size="large" />;
   }
 
   if (error) {
