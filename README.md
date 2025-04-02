@@ -32,6 +32,29 @@ Follow these steps to run the project locally:
    - You should see the Etros Basketball homepage
    - **Note**: The backend API may take 30 seconds to 1 minute to wake up on first request, as it's hosted on a free tier service that goes to sleep after inactivity
 
+## Test Accounts
+
+You can use these accounts to test different roles in the application:
+
+### Admin Account
+
+```
+Email: admin@example.com
+Password: TestPassword123
+```
+
+### User Accounts
+
+```
+Email: user1@example.com
+Password: TestPassword123
+```
+
+```
+Email: user2@example.com
+Password: TestPassword123
+```
+
 ## Tech Stack
 
 - **Frontend Framework**: React 19
