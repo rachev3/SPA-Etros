@@ -129,12 +129,10 @@ const PlayersManagement = () => {
             player={currentPlayer}
             onClose={() => {
               setIsEditModalOpen(false);
-              setCurrentPlayer(null);
             }}
             onPlayerUpdated={async () => {
               await refetch();
               setIsEditModalOpen(false);
-              setCurrentPlayer(null);
             }}
           />
         </div>

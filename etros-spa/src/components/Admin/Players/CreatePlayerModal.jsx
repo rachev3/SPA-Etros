@@ -170,9 +170,10 @@ const CreatePlayerModal = ({ onClose, onPlayerCreated }) => {
                 Jersey Number *
               </label>
               <input
-                type="text"
+                type="number"
                 name="number"
                 required
+                min="0"
                 className={`w-full border rounded-lg px-3 py-2 disabled:bg-gray-100 ${
                   getFieldError("number") ? "border-red-500" : "border-gray-300"
                 }`}
