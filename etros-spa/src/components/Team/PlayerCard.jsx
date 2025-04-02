@@ -12,7 +12,7 @@ const PlayerCard = ({ player }) => {
               "https://placehold.co/300x400/111/333?text=Player"
             }
             alt={player.name}
-            className="w-full h-80 object-cover"
+            className="w-full h-100 object-cover"
           />
           <div className="absolute top-0 right-0 bg-black bg-opacity-75 py-2 px-4">
             <span className="text-yellow-400 font-bold text-2xl">

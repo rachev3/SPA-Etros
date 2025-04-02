@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useCreatePlayerStats } from "../../../api/playerStatsApi";
 import { usePlayers } from "../../../api/playerApi";
 
@@ -19,6 +19,7 @@ const AddStatModal = ({ matchId, onClose, onSuccess }) => {
     freeThrowsAttempted: 0,
     offensiveRebounds: 0,
     defensiveRebounds: 0,
+    totalRebounds: 0,
     assists: 0,
     steals: 0,
     blocks: 0,
@@ -29,20 +30,70 @@ const AddStatModal = ({ matchId, onClose, onSuccess }) => {
     plusMinus: 0,
   });
 
+  // Calculate derived statistics whenever relevant fields change
+  useEffect(() => {
+    const twoPointPoints = formData.twoPointsMade * 2;
+    const threePointPoints = formData.threePointsMade * 3;
+    const freeThrowPoints = formData.freeThrowsMade;
+    const totalPoints = twoPointPoints + threePointPoints + freeThrowPoints;
+
+    const totalRebounds =
+      formData.offensiveRebounds + formData.defensiveRebounds;
+
+    setFormData((prev) => ({
+      ...prev,
+      points: totalPoints,
+      totalRebounds,
+      fieldGoalsMade: formData.twoPointsMade + formData.threePointsMade,
+      fieldGoalsAttempted:
+        formData.twoPointsAttempted + formData.threePointsAttempted,
+    }));
+  }, [
+    formData.twoPointsMade,
+    formData.twoPointsAttempted,
+    formData.threePointsMade,
+    formData.threePointsAttempted,
+    formData.freeThrowsMade,
+    formData.offensiveRebounds,
+    formData.defensiveRebounds,
+  ]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: name === "playerId" ? value : parseInt(value) || 0,
-    });
-    // Clear error when user makes changes
+    const numValue = name === "playerId" ? value : parseInt(value) || 0;
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: numValue,
+    }));
+
     setError(null);
+  };
+
+  const validateStats = () => {
+    if (formData.twoPointsMade > formData.twoPointsAttempted) {
+      setError("Two points made cannot exceed attempts");
+      return false;
+    }
+    if (formData.threePointsMade > formData.threePointsAttempted) {
+      setError("Three points made cannot exceed attempts");
+      return false;
+    }
+    if (formData.freeThrowsMade > formData.freeThrowsAttempted) {
+      setError("Free throws made cannot exceed attempts");
+      return false;
+    }
+    return true;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.playerId) {
       setError("Please select a player");
+      return;
+    }
+
+    if (!validateStats()) {
       return;
     }
 
@@ -342,18 +393,9 @@ const AddStatModal = ({ matchId, onClose, onSuccess }) => {
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
                 />
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Efficiency
-                </label>
-                <input
-                  type="number"
-                  name="efficiency"
-                  value={formData.efficiency}
-                  onChange={handleChange}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
-                />
-              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Points
@@ -362,6 +404,20 @@ const AddStatModal = ({ matchId, onClose, onSuccess }) => {
                   type="number"
                   name="points"
                   value={formData.points}
+                  onChange={handleChange}
+                  className="w-full p-3 border border-gray-300 rounded-lg bg-gray-100 cursor-not-allowed"
+                  readonly
+                  disabled
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Efficiency
+                </label>
+                <input
+                  type="number"
+                  name="efficiency"
+                  value={formData.efficiency}
                   onChange={handleChange}
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
                 />

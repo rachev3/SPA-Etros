@@ -12,6 +12,64 @@ const PlayerDetailsPage = () => {
     setActiveTab(tab);
   };
 
+  const calculateAverages = (statsHistory) => {
+    if (!statsHistory || statsHistory.length === 0) return null;
+
+    const totals = statsHistory.reduce(
+      (acc, stat) => ({
+        points: acc.points + (stat.points || 0),
+        rebounds: acc.rebounds + (stat.totalRebounds || 0),
+        assists: acc.assists + (stat.assists || 0),
+        steals: acc.steals + (stat.steals || 0),
+        blocks: acc.blocks + (stat.blocks || 0),
+        fieldGoalsMade: acc.fieldGoalsMade + (stat.fieldGoalsMade || 0),
+        fieldGoalsAttempted:
+          acc.fieldGoalsAttempted + (stat.fieldGoalsAttempted || 0),
+        threePointsMade: acc.threePointsMade + (stat.threePointsMade || 0),
+        threePointsAttempted:
+          acc.threePointsAttempted + (stat.threePointsAttempted || 0),
+        freeThrowsMade: acc.freeThrowsMade + (stat.freeThrowsMade || 0),
+        freeThrowsAttempted:
+          acc.freeThrowsAttempted + (stat.freeThrowsAttempted || 0),
+        efficiency: acc.efficiency + (stat.efficiency || 0),
+      }),
+      {
+        points: 0,
+        rebounds: 0,
+        assists: 0,
+        steals: 0,
+        blocks: 0,
+        fieldGoalsMade: 0,
+        fieldGoalsAttempted: 0,
+        threePointsMade: 0,
+        threePointsAttempted: 0,
+        freeThrowsMade: 0,
+        freeThrowsAttempted: 0,
+        efficiency: 0,
+      }
+    );
+
+    const gamesPlayed = statsHistory.length;
+
+    return {
+      ppg: (totals.points / gamesPlayed).toFixed(1),
+      rpg: (totals.rebounds / gamesPlayed).toFixed(1),
+      apg: (totals.assists / gamesPlayed).toFixed(1),
+      spg: (totals.steals / gamesPlayed).toFixed(1),
+      bpg: (totals.blocks / gamesPlayed).toFixed(1),
+      fgPercentage: (
+        (totals.fieldGoalsMade / totals.fieldGoalsAttempted) * 100 || 0
+      ).toFixed(1),
+      threePtPercentage: (
+        (totals.threePointsMade / totals.threePointsAttempted) * 100 || 0
+      ).toFixed(1),
+      ftPercentage: (
+        (totals.freeThrowsMade / totals.freeThrowsAttempted) * 100 || 0
+      ).toFixed(1),
+      efficiency: (totals.efficiency / gamesPlayed).toFixed(1),
+    };
+  };
+
   if (loading) {
     return <LoadingSpinner size="large" />;
   }
@@ -48,15 +106,14 @@ const PlayerDetailsPage = () => {
     );
   }
 
+  const averages = calculateAverages(player.statsHistory);
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="w-full h-96 bg-black relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent z-10"></div>
         <img
-          src={
-            player.coverImage ||
-            "https://placehold.co/1600x900/111/333?text=Player+Action+Shot"
-          }
+          src={"/clap.jpg"}
           alt={`${player.name} action shot`}
           className="w-full h-full object-cover opacity-60"
         />
@@ -87,8 +144,8 @@ const PlayerDetailsPage = () => {
                   : player.position}
               </p>
               <div className="flex mt-3 space-x-4">
-                {Object.entries(player.socialMedia || {}).map(
-                  ([platform, url]) => (
+                {player.socialMedia &&
+                  Object.entries(player.socialMedia).map(([platform, url]) => (
                     <a
                       key={platform}
                       href={url}
@@ -117,9 +174,18 @@ const PlayerDetailsPage = () => {
                           <path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z" />
                         </svg>
                       )}
+                      {platform === "instagram" && (
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-6 w-6"
+                          fill="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+                        </svg>
+                      )}
                     </a>
-                  )
-                )}
+                  ))}
               </div>
             </div>
           </div>
@@ -154,29 +220,15 @@ const PlayerDetailsPage = () => {
                     <tr className="border-b border-gray-200">
                       <th className="py-3 text-gray-500 font-medium">Age</th>
                       <td className="py-3 font-semibold text-gray-800">
-                        {new Date().getFullYear() - player.bornYear}
+                        {player.bornYear
+                          ? new Date().getFullYear() - player.bornYear
+                          : "N/A"}
                       </td>
                     </tr>
                     <tr className="border-b border-gray-200">
                       <th className="py-3 text-gray-500 font-medium">Born</th>
                       <td className="py-3 font-semibold text-gray-800">
-                        {player.bornYear}
-                      </td>
-                    </tr>
-                    <tr className="border-b border-gray-200">
-                      <th className="py-3 text-gray-500 font-medium">
-                        College
-                      </th>
-                      <td className="py-3 font-semibold text-gray-800">
-                        {player.college || "Information not available"}
-                      </td>
-                    </tr>
-                    <tr>
-                      <th className="py-3 text-gray-500 font-medium">
-                        Experience
-                      </th>
-                      <td className="py-3 font-semibold text-gray-800">
-                        {player.yearsWithTeam || "N/A"}
+                        {player.bornYear || "N/A"}
                       </td>
                     </tr>
                   </tbody>
@@ -209,120 +261,52 @@ const PlayerDetailsPage = () => {
                       <div className="bg-gray-50 p-4 rounded-lg text-center">
                         <p className="text-sm text-gray-500 mb-1">PPG</p>
                         <p className="text-2xl font-bold text-gray-800">
-                          {player.statsHistory && player.statsHistory.length > 0
-                            ? (
-                                player.statsHistory.reduce(
-                                  (acc, stat) => acc + (stat.points || 0),
-                                  0
-                                ) / player.statsHistory.length
-                              ).toFixed(1)
-                            : "0.0"}
+                          {averages?.ppg || "0.0"}
                         </p>
                       </div>
                       <div className="bg-gray-50 p-4 rounded-lg text-center">
                         <p className="text-sm text-gray-500 mb-1">RPG</p>
                         <p className="text-2xl font-bold text-gray-800">
-                          {player.statsHistory && player.statsHistory.length > 0
-                            ? (
-                                player.statsHistory.reduce(
-                                  (acc, stat) =>
-                                    acc + (stat.totalRebounds || 0),
-                                  0
-                                ) / player.statsHistory.length
-                              ).toFixed(1)
-                            : "0.0"}
+                          {averages?.rpg || "0.0"}
                         </p>
                       </div>
                       <div className="bg-gray-50 p-4 rounded-lg text-center">
                         <p className="text-sm text-gray-500 mb-1">APG</p>
                         <p className="text-2xl font-bold text-gray-800">
-                          {player.statsHistory && player.statsHistory.length > 0
-                            ? (
-                                player.statsHistory.reduce(
-                                  (acc, stat) => acc + (stat.assists || 0),
-                                  0
-                                ) / player.statsHistory.length
-                              ).toFixed(1)
-                            : "0.0"}
+                          {averages?.apg || "0.0"}
                         </p>
                       </div>
                       <div className="bg-gray-50 p-4 rounded-lg text-center">
-                        <p className="text-sm text-gray-500 mb-1">SPG</p>
+                        <p className="text-sm text-gray-500 mb-1">EFF</p>
                         <p className="text-2xl font-bold text-gray-800">
-                          {player.statsHistory && player.statsHistory.length > 0
-                            ? (
-                                player.statsHistory.reduce(
-                                  (acc, stat) => acc + (stat.steals || 0),
-                                  0
-                                ) / player.statsHistory.length
-                              ).toFixed(1)
-                            : "0.0"}
+                          {averages?.efficiency || "0.0"}
                         </p>
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-3 gap-4 mb-8">
+                    <div className="grid grid-cols-4 gap-4 mb-8">
                       <div className="bg-gray-50 p-4 rounded-lg text-center">
                         <p className="text-sm text-gray-500 mb-1">FG%</p>
                         <p className="text-2xl font-bold text-gray-800">
-                          {player.statsHistory && player.statsHistory.length > 0
-                            ? (
-                                (player.statsHistory.reduce(
-                                  (acc, stat) =>
-                                    acc + (stat.fieldGoalsMade || 0),
-                                  0
-                                ) /
-                                  player.statsHistory.reduce(
-                                    (acc, stat) =>
-                                      acc + (stat.fieldGoalsAttempted || 0),
-                                    0
-                                  )) *
-                                100
-                              ).toFixed(1)
-                            : "0.0"}
-                          %
+                          {averages?.fgPercentage || "0.0"}%
                         </p>
                       </div>
                       <div className="bg-gray-50 p-4 rounded-lg text-center">
                         <p className="text-sm text-gray-500 mb-1">3P%</p>
                         <p className="text-2xl font-bold text-gray-800">
-                          {player.statsHistory && player.statsHistory.length > 0
-                            ? (
-                                (player.statsHistory.reduce(
-                                  (acc, stat) =>
-                                    acc + (stat.threePointsMade || 0),
-                                  0
-                                ) /
-                                  player.statsHistory.reduce(
-                                    (acc, stat) =>
-                                      acc + (stat.threePointsAttempted || 0),
-                                    0
-                                  )) *
-                                100
-                              ).toFixed(1)
-                            : "0.0"}
-                          %
+                          {averages?.threePtPercentage || "0.0"}%
                         </p>
                       </div>
                       <div className="bg-gray-50 p-4 rounded-lg text-center">
                         <p className="text-sm text-gray-500 mb-1">FT%</p>
                         <p className="text-2xl font-bold text-gray-800">
-                          {player.statsHistory && player.statsHistory.length > 0
-                            ? (
-                                (player.statsHistory.reduce(
-                                  (acc, stat) =>
-                                    acc + (stat.freeThrowsMade || 0),
-                                  0
-                                ) /
-                                  player.statsHistory.reduce(
-                                    (acc, stat) =>
-                                      acc + (stat.freeThrowsAttempted || 0),
-                                    0
-                                  )) *
-                                100
-                              ).toFixed(1)
-                            : "0.0"}
-                          %
+                          {averages?.ftPercentage || "0.0"}%
+                        </p>
+                      </div>
+                      <div className="bg-gray-50 p-4 rounded-lg text-center">
+                        <p className="text-sm text-gray-500 mb-1">BPG</p>
+                        <p className="text-2xl font-bold text-gray-800">
+                          {averages?.bpg || "0.0"}
                         </p>
                       </div>
                     </div>
@@ -371,12 +355,15 @@ const PlayerDetailsPage = () => {
                               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 +/-
                               </th>
+                              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                EFF
+                              </th>
                             </tr>
                           </thead>
                           <tbody className="bg-white divide-y divide-gray-200">
                             {player.statsHistory.map((stat, index) => (
                               <tr
-                                key={stat.id || index}
+                                key={stat._id || index}
                                 className="hover:bg-gray-50"
                               >
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -385,34 +372,37 @@ const PlayerDetailsPage = () => {
                                   ).toLocaleDateString()}
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                  {stat.points}
+                                  {stat.points || 0}
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                  {stat.totalRebounds}
+                                  {stat.totalRebounds || 0}
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                  {stat.assists}
+                                  {stat.assists || 0}
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                  {stat.steals}
+                                  {stat.steals || 0}
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                  {stat.blocks}
+                                  {stat.blocks || 0}
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                  {stat.fieldGoalsMade}/
-                                  {stat.fieldGoalsAttempted}
+                                  {stat.fieldGoalsMade || 0}/
+                                  {stat.fieldGoalsAttempted || 0}
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                  {stat.threePointsMade}/
-                                  {stat.threePointsAttempted}
+                                  {stat.threePointsMade || 0}/
+                                  {stat.threePointsAttempted || 0}
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                  {stat.freeThrowsMade}/
-                                  {stat.freeThrowsAttempted}
+                                  {stat.freeThrowsMade || 0}/
+                                  {stat.freeThrowsAttempted || 0}
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                  {stat.plusMinus}
+                                  {stat.plusMinus || 0}
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                  {stat.efficiency || 0}
                                 </td>
                               </tr>
                             ))}
